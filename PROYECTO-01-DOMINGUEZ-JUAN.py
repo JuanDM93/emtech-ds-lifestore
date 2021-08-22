@@ -60,11 +60,11 @@ def get_categories(data:list=lifestore_products) -> list:
     return categories
 
 
-def filter_by_categories(data:list, cats:list=[]) -> list:
+def filter_by_categories(data:list, cats:list=['procesadores']) -> list:
     """
     data: any list with product_id at [0]
     cats: a custom categories list
-    returns: list of products objects filtered by cats
+    returns: list of products filtered by cats
     """
     result = []
     for d in data:
@@ -118,10 +118,6 @@ def global_searches(most:bool=True) -> list:
 
 def most_searched(categories:list=['procesadores']) -> list:
     """
-    categories = [
-        'procesadores', 'tarjetas de video', 'tarjetas madre',
-        'discos duros', 'memorias usb', 'pantallas', 'bocinas', 'audifonos'
-        ]
     returns: sorted most searched products list
     """
     return filter_by_categories(global_searches(), categories)
@@ -193,6 +189,39 @@ def least_reviewed(categories:list=['procesadores']) -> list:
     return filter_by_categories(total_reviewed(False), categories)
 
 
+# Refunds
+def total_refunds(most:bool=True) -> list:
+    """
+    returns: refunds per product list
+    """
+    result = []
+    g_sales = global_sales()
+    for i in range(len(g_sales)):
+        result.append([g_sales[i][0], []])
+        sales = g_sales[i][1]
+        for s in sales:
+            refund = get_sale(s)[-1]
+            if refund > 0:
+                result[i][1].append(refund)
+    
+    result.sort(key=lambda p: len(p[-1]), reverse=most)
+    return result
+
+
+def most_refund(categories:list=['procesadores']) -> list:
+    """
+    returns: product refunds list per categories
+    """
+    return filter_by_categories(total_refunds(), categories)
+
+
+def least_refund(categories:list=['procesadores']) -> list:
+    """
+    returns: product refunds list per categories
+    """
+    return filter_by_categories(total_refunds(False), categories)
+
+
 #### TESTING
 def test():
     cat = ['procesadores', 'audifonos']
@@ -212,11 +241,11 @@ def test():
     reviewed = most_reviewed(cat)
     print(f'most_reviewed {get_categories(reviewed)}:')
     print(reviewed)
+    
+    refunds = most_refund(cat)
+    print(f'most_refund {get_categories(refunds)}:')
+    print(refunds)
 ####
-
-
-def refunds():
-    pass
 
 
 # Revenue
@@ -235,7 +264,7 @@ def main():
     # GLOBALS
     CATEGORIES = get_categories()
     
-    #login()
+    login()
     test()
 
 
