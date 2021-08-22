@@ -18,27 +18,27 @@ def test():
     print(sold)
     
     searches = global_searches()
-    searched = most_searched(cat)[:100]
+    searched = most_searched(searches, cat)[:100]
     print(f'most_searched {get_categories(searched)}:')
     print(searched)
     
     stockes = global_stocks()
-    stocked = lowest_stock(cat)
+    stocked = lowest_stock(stockes, cat)
     print(f'lowest_stock {get_categories(stocked)}:')
     print(stocked)
 
     reviews = total_reviewes()
-    reviewed = most_reviewed(cat)[:20]
+    reviewed = most_reviewed(reviews, cat)[:20]
     print(f'most_reviewed {get_categories(reviewed)}:')
     print(reviewed)
     
     refs = total_refunds()
-    refunds = most_refund(cat)
+    refunds = most_refund(refs, cat)
     print(f'most_refund {get_categories(refunds)}:')
     print(refunds)
 
     revenues = total_revenue()
-    revenue = least_revenue(cat)
+    revenue = least_revenue(revenues, cat)
     print(f'least_revenue {get_categories(revenue)}:')
     print(revenue)
 

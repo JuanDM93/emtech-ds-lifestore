@@ -117,20 +117,22 @@ def global_searches() -> list:
     return total_searches
 
 
-def most_searched(categories:list=['procesadores']) -> list:
+def most_searched(data:list, categories:list=['procesadores']) -> list:
     """
+    data: any list with product_id at [0]
     returns: sorted most searched products list
     """
-    result = global_searches()
+    result = data[:]
     result.sort(key=lambda p: len(p[-1]), reverse=True)
     return filter_by_categories(result, categories)
 
 
-def least_searched(categories:list=['procesadores']) -> list:
+def least_searched(data:list, categories:list=['procesadores']) -> list:
     """
+    data: any list with product_id at [0]
     returns: sorted least searched products list by category
     """
-    result = global_searches()
+    result = data[:]
     result.sort(key=lambda p: len(p[-1]), reverse=False)
     return filter_by_categories(result, categories)
 
@@ -143,22 +145,22 @@ def global_stocks() -> list:
     return [[p[0], p[-1]] for p in lifestore_products]
 
 
-def lowest_stock(categories:list=['procesadores']) -> list:
+def lowest_stock(data:list, categories:list=['procesadores']) -> list:
     """
-    low_limit: how low to warn
+    data: any list with product_id at [0]
     returns: sorted low stock products list by category
     """
-    result = global_stocks()
+    result = data[:]
     result.sort(key=lambda p: p[1], reverse=False)
     return filter_by_categories(result, categories)
 
 
-def most_stock(categories:list=['procesadores']) -> list:
+def most_stock(data:list, categories:list=['procesadores']) -> list:
     """
-    low_limit: how low to warn
+    data: any list with product_id at [0]
     returns: sorted low stock products list by category
     """
-    result = global_stocks()
+    result = data[:]
     result.sort(key=lambda p: p[1], reverse=True)
     return filter_by_categories(result, categories)
 
@@ -179,20 +181,22 @@ def total_reviewes() -> list:
     return result
 
 
-def most_reviewed(categories:list=['procesadores']) -> list:
+def most_reviewed(data:list, categories:list=['procesadores']) -> list:
     """
+    data: any list with product_id at [0]
     returns: product reviews list per categories
     """
-    result = total_reviewes()
+    result = data[:]
     result.sort(key=lambda p: len(p[-1]), reverse=True)
     return filter_by_categories(result, categories)
 
 
-def least_reviewed(categories:list=['procesadores']) -> list:
+def least_reviewed(data:list, categories:list=['procesadores']) -> list:
     """
+    data: any list with product_id at [0]
     returns: product reviews list per categories
     """
-    result = total_reviewes()
+    result = data[:]
     result.sort(key=lambda p: len(p[-1]), reverse=False)
     return filter_by_categories(result, categories)
 
@@ -214,20 +218,22 @@ def total_refunds(most:bool=True) -> list:
     return result
 
 
-def most_refund(categories:list=['procesadores']) -> list:
+def most_refund(data:list, categories:list=['procesadores']) -> list:
     """
+    data: any list with product_id at [0]
     returns: product refunds list per categories
     """
-    result = total_refunds()
+    result = data[:]
     result.sort(key=lambda p: len(p[-1]), reverse=True)
     return filter_by_categories(result, categories)
 
 
-def least_refund(categories:list=['procesadores']) -> list:
+def least_refund(data:list, categories:list=['procesadores']) -> list:
     """
+    data: any list with product_id at [0]
     returns: product refunds list per categories
     """
-    result = total_refunds()
+    result = data[:]
     result.sort(key=lambda p: len(p[-1]), reverse=False)
     return filter_by_categories(result, categories)
 
@@ -249,19 +255,21 @@ def total_revenue() -> list:
     return result
 
 
-def most_revenue(categories:list=['procesadores']) -> list:
+def most_revenue(data:list, categories:list=['procesadores']) -> list:
     """
+    data: any list with product_id at [0]
     returns: product revenue list per categories
     """
-    result = total_revenue()
+    result = data[:]
     result.sort(key=lambda p: p[-1], reverse=True)
     return filter_by_categories(result, categories)
 
 
-def least_revenue(categories:list=['procesadores']) -> list:
+def least_revenue(data:list, categories:list=['procesadores']) -> list:
     """
+    data: any list with product_id at [0]
     returns: product revenue list per categories
     """
-    result = total_revenue()
+    result = data[:]
     result.sort(key=lambda p: p[-1], reverse=False)
     return filter_by_categories(result, categories)
