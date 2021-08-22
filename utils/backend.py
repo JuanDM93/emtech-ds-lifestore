@@ -50,9 +50,10 @@ def filter_by_categories(data:list, cats:list) -> list:
     return [d for d in data if get_categorie(d[0]) in cats]
 
 
-def filter_by_month(data:list, month:str='01') -> list:
+def filter_by_month(data:list, month:str) -> list:
     """
     data: any list with product_id at [0] and sales_ids at [1]
+    month: str ['01', ..., '12']
     returns: list of product sales filtered by month
     """
     result = []
@@ -70,7 +71,7 @@ def filter_by_month(data:list, month:str='01') -> list:
 # Sales
 def global_sales() -> list:
     """
-    returns: sales list by product
+    returns: global sales list by product
     """
     total_sales = [[p[0], []] for p in lifestore_products]
     for sale in lifestore_sales:
@@ -89,6 +90,7 @@ def monthly_sales(data:list, month:str) -> list:
 def most_sold(data:list, categories:list) -> list:
     """
     data: any list with product_id at [0]
+    cats: a custom categories list
     returns: sorted most sold products list by category
     """
     result = data[:]
@@ -99,6 +101,7 @@ def most_sold(data:list, categories:list) -> list:
 def least_sold(data:list, categories:list) -> list:
     """
     data: any list with product_id at [0]
+    cats: a custom categories list
     returns: sorted least sold products list by category
     """
     result = data[:]
@@ -109,7 +112,7 @@ def least_sold(data:list, categories:list) -> list:
 # Searches
 def global_searches() -> list:
     """
-    returns: search list by product
+    returns: global search list by product
     """ 
     total_searches = [[p[0], []] for p in lifestore_products]
     for search in lifestore_searches:
@@ -117,9 +120,10 @@ def global_searches() -> list:
     return total_searches
 
 
-def most_searched(data:list, categories:list=['procesadores']) -> list:
+def most_searched(data:list, categories:list) -> list:
     """
     data: any list with product_id at [0]
+    cats: a custom categories list
     returns: sorted most searched products list
     """
     result = data[:]
@@ -127,9 +131,10 @@ def most_searched(data:list, categories:list=['procesadores']) -> list:
     return filter_by_categories(result, categories)
 
 
-def least_searched(data:list, categories:list=['procesadores']) -> list:
+def least_searched(data:list, categories:list) -> list:
     """
     data: any list with product_id at [0]
+    cats: a custom categories list
     returns: sorted least searched products list by category
     """
     result = data[:]
@@ -140,14 +145,15 @@ def least_searched(data:list, categories:list=['procesadores']) -> list:
 # Stocks
 def global_stocks() -> list:
     """
-    returns: products in stock 
+    returns: global stocks for products 
     """
     return [[p[0], p[-1]] for p in lifestore_products]
 
 
-def lowest_stock(data:list, categories:list=['procesadores']) -> list:
+def lowest_stock(data:list, categories:list) -> list:
     """
     data: any list with product_id at [0]
+    cats: a custom categories list
     returns: sorted low stock products list by category
     """
     result = data[:]
@@ -155,9 +161,10 @@ def lowest_stock(data:list, categories:list=['procesadores']) -> list:
     return filter_by_categories(result, categories)
 
 
-def most_stock(data:list, categories:list=['procesadores']) -> list:
+def most_stock(data:list, categories:list) -> list:
     """
     data: any list with product_id at [0]
+    cats: a custom categories list
     returns: sorted low stock products list by category
     """
     result = data[:]
@@ -168,7 +175,7 @@ def most_stock(data:list, categories:list=['procesadores']) -> list:
 # Reviews
 def total_reviewes() -> list:
     """
-    returns: reviews per product list
+    returns: reviews per global products list
     """
     result = []
     g_sales = global_sales()
@@ -181,9 +188,10 @@ def total_reviewes() -> list:
     return result
 
 
-def most_reviewed(data:list, categories:list=['procesadores']) -> list:
+def most_reviewed(data:list, categories:list) -> list:
     """
     data: any list with product_id at [0]
+    cats: a custom categories list
     returns: product reviews list per categories
     """
     result = data[:]
@@ -191,9 +199,10 @@ def most_reviewed(data:list, categories:list=['procesadores']) -> list:
     return filter_by_categories(result, categories)
 
 
-def least_reviewed(data:list, categories:list=['procesadores']) -> list:
+def least_reviewed(data:list, categories:list) -> list:
     """
     data: any list with product_id at [0]
+    cats: a custom categories list
     returns: product reviews list per categories
     """
     result = data[:]
@@ -204,7 +213,7 @@ def least_reviewed(data:list, categories:list=['procesadores']) -> list:
 # Refunds
 def total_refunds() -> list:
     """
-    returns: refunds per product list
+    returns: total refunds per product list
     """
     result = []
     g_sales = global_sales()
@@ -216,9 +225,10 @@ def total_refunds() -> list:
     return result
 
 
-def most_refund(data:list, categories:list=['procesadores']) -> list:
+def most_refund(data:list, categories:list) -> list:
     """
     data: any list with product_id at [0]
+    cats: a custom categories list
     returns: product refunds list per categories
     """
     result = data[:]
@@ -226,9 +236,10 @@ def most_refund(data:list, categories:list=['procesadores']) -> list:
     return filter_by_categories(result, categories)
 
 
-def least_refund(data:list, categories:list=['procesadores']) -> list:
+def least_refund(data:list, categories:list) -> list:
     """
     data: any list with product_id at [0]
+    cats: a custom categories list
     returns: product refunds list per categories
     """
     result = data[:]
@@ -253,9 +264,10 @@ def total_revenue() -> list:
     return result
 
 
-def most_revenue(data:list, categories:list=['procesadores']) -> list:
+def most_revenue(data:list, categories:list) -> list:
     """
     data: any list with product_id at [0]
+    cats: a custom categories list
     returns: product revenue list per categories
     """
     result = data[:]
@@ -263,9 +275,10 @@ def most_revenue(data:list, categories:list=['procesadores']) -> list:
     return filter_by_categories(result, categories)
 
 
-def least_revenue(data:list, categories:list=['procesadores']) -> list:
+def least_revenue(data:list, categories:list) -> list:
     """
     data: any list with product_id at [0]
+    cats: a custom categories list
     returns: product revenue list per categories
     """
     result = data[:]
