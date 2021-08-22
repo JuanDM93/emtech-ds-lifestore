@@ -1,14 +1,16 @@
 """
 Frontend modules
 """
-
 # Login
 def login():
     """
-    user:       admin
-    password:   pass
+    admin:  admin
+    secret: pass
     """
-    def ask():
+    def ask() -> tuple:
+        """
+        returns: user inputs (admin, secret)
+        """
         admin = input('Input admin user: ')
         secret = input('Password: ')
         return admin, secret

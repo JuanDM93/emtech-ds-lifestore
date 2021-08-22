@@ -52,7 +52,7 @@ def clean_empty(data:list) -> list:
 
 def count_empty(data:list) -> list:
     """
-    data: any list with id at [0] and to_clean_list at [1]
+    data: any list with id at [0] and to_count_list at [1]
     returns: count list ([] -> 0, [...] -> len([...]))
     """
     result = [[d[0], len(d[1])] for d in data]
@@ -65,7 +65,13 @@ def filter_by_categories(data:list, cats:list) -> list:
     cats: a custom categories list
     returns: list of products filtered by cats
     """
-    return [d for d in data if get_categorie(d[0]) in cats]
+    result = []
+    for d in data:
+        c = get_categorie(d[0])
+        if c in cats:
+            result.append(d)
+    #result = [d for d in data if get_categorie(d[0]) in cats]
+    return result
 
 
 def filter_by_month(data:list, month:str) -> list:
@@ -97,34 +103,24 @@ def global_sales() -> list:
     return total_sales
 
 
-def monthly_sales(data:list, month:str) -> list:
-    """
-    data: any list with product_id at [0] and sales_ids at [1]
-    returns: monthly filtered sales
-    """
-    return filter_by_month(data, month)
-
-
-def most_sold(data:list, categories:list) -> list:
+def most_sold(data:list) -> list:
     """
     data: any list with product_id at [0]
-    cats: a custom categories list
-    returns: sorted most sold products list by category
+    returns: sorted most sold products list
     """
     result = data[:]
     result.sort(key=lambda p: len(p[-1]), reverse=True)
-    return filter_by_categories(result, categories)
+    return result
 
 
-def least_sold(data:list, categories:list) -> list:
+def least_sold(data:list) -> list:
     """
     data: any list with product_id at [0]
-    cats: a custom categories list
-    returns: sorted least sold products list by category
+    returns: sorted least sold products list
     """
     result = data[:]
-    result.sort(key=lambda p: len(p[-1]), reverse=False)
-    return filter_by_categories(result, categories)
+    result.sort(key=lambda p: len(p[1]), reverse=False)
+    return result
 
 
 # Searches
@@ -138,26 +134,24 @@ def global_searches() -> list:
     return total_searches
 
 
-def most_searched(data:list, categories:list) -> list:
+def most_searched(data:list) -> list:
     """
     data: any list with product_id at [0]
-    cats: a custom categories list
     returns: sorted most searched products list
     """
     result = data[:]
     result.sort(key=lambda p: len(p[-1]), reverse=True)
-    return filter_by_categories(result, categories)
+    return result
 
 
-def least_searched(data:list, categories:list) -> list:
+def least_searched(data:list) -> list:
     """
     data: any list with product_id at [0]
-    cats: a custom categories list
     returns: sorted least searched products list by category
     """
     result = data[:]
     result.sort(key=lambda p: len(p[-1]), reverse=False)
-    return filter_by_categories(result, categories)
+    return result
 
 
 # Stocks
@@ -168,26 +162,24 @@ def global_stocks() -> list:
     return [[p[0], p[-1]] for p in lifestore_products]
 
 
-def lowest_stock(data:list, categories:list) -> list:
+def lowest_stock(data:list) -> list:
     """
     data: any list with product_id at [0]
-    cats: a custom categories list
     returns: sorted low stock products list by category
     """
     result = data[:]
     result.sort(key=lambda p: p[1], reverse=False)
-    return filter_by_categories(result, categories)
+    return result
 
 
-def most_stock(data:list, categories:list) -> list:
+def most_stock(data:list) -> list:
     """
     data: any list with product_id at [0]
-    cats: a custom categories list
     returns: sorted low stock products list by category
     """
     result = data[:]
     result.sort(key=lambda p: p[1], reverse=True)
-    return filter_by_categories(result, categories)
+    return result
 
 
 # Reviews
@@ -206,26 +198,24 @@ def total_reviewes() -> list:
     return result
 
 
-def most_reviewed(data:list, categories:list) -> list:
+def most_reviewed(data:list) -> list:
     """
     data: any list with product_id at [0]
-    cats: a custom categories list
     returns: product reviews list per categories
     """
     result = data[:]
     result.sort(key=lambda p: len(p[-1]), reverse=True)
-    return filter_by_categories(result, categories)
+    return result
 
 
-def least_reviewed(data:list, categories:list) -> list:
+def least_reviewed(data:list) -> list:
     """
     data: any list with product_id at [0]
-    cats: a custom categories list
     returns: product reviews list per categories
     """
     result = data[:]
     result.sort(key=lambda p: len(p[-1]), reverse=False)
-    return filter_by_categories(result, categories)
+    return result
 
 
 # Refunds
@@ -243,26 +233,24 @@ def total_refunds() -> list:
     return result
 
 
-def most_refund(data:list, categories:list) -> list:
+def most_refund(data:list) -> list:
     """
     data: any list with product_id at [0]
-    cats: a custom categories list
     returns: product refunds list per categories
     """
     result = data[:]
     result.sort(key=lambda p: p[-1], reverse=True)
-    return filter_by_categories(result, categories)
+    return result
 
 
-def least_refund(data:list, categories:list) -> list:
+def least_refund(data:list) -> list:
     """
     data: any list with product_id at [0]
-    cats: a custom categories list
     returns: product refunds list per categories
     """
     result = data[:]
     result.sort(key=lambda p: p[-1], reverse=False)
-    return filter_by_categories(result, categories)
+    return result
 
 
 # Revenue
@@ -282,23 +270,21 @@ def total_revenue() -> list:
     return result
 
 
-def most_revenue(data:list, categories:list) -> list:
+def most_revenue(data:list) -> list:
     """
     data: any list with product_id at [0]
-    cats: a custom categories list
     returns: product revenue list per categories
     """
     result = data[:]
     result.sort(key=lambda p: p[-1], reverse=True)
-    return filter_by_categories(result, categories)
+    return result
 
 
-def least_revenue(data:list, categories:list) -> list:
+def least_revenue(data:list) -> list:
     """
     data: any list with product_id at [0]
-    cats: a custom categories list
     returns: product revenue list per categories
     """
     result = data[:]
     result.sort(key=lambda p: p[-1], reverse=False)
-    return filter_by_categories(result, categories)
+    return result
