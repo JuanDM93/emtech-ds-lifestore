@@ -13,15 +13,15 @@ def login():
     user:       admin
     password:   pass
     """
-    def ask(admin, secret):
-        admin = input('Input admin user:')
-        secret = input('Password:')
+    def ask():
+        admin = input('Input admin user: ')
+        secret = input('Password: ')
         return admin, secret
     
-    admin, secret = '', ''
+    admin, secret = ask()
     while 'admin' != admin or 'pass' != secret:
-        admin, secret = ask(admin, secret)
         print('Login failed... try again')
+        admin, secret = ask()
     print('Login succesful!')
 
 
