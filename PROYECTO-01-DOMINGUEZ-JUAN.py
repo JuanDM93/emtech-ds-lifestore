@@ -74,6 +74,20 @@ def filter_by_categories(data:list, cats:list=['procesadores']) -> list:
     return result
 
 
+def filter_by_month(data:list, month:str='01') -> list:
+    """
+    data: any sales_id list
+    returns: list of sales filtered by month
+    """
+    result = []
+    for d in data:
+        sale = get_sale(d)
+        s_date = sale[3].split('/')[1]
+        if s_date == month:
+            result.append(d)
+    return result
+        
+
 # Sales
 def global_sales() -> list:
     """
@@ -230,7 +244,10 @@ def least_refund(categories:list=['procesadores']) -> list:
 
 
 # Revenue
-def total_revenue(most:bool=True) -> list:
+def total_revenue() -> list:
+    """
+    returns: total revenue per product list
+    """
     result = []
     for ps in global_sales():
         product = get_product(ps[0])
@@ -243,13 +260,31 @@ def total_revenue(most:bool=True) -> list:
     return result
 
 
+def monthly_revenue(data:list, month:str='01') -> list:
+    """
+    data: product_id at [0] and sales_ids[] at [1]
+    result: monthly revenue list filtered by product
+    """
+    result = []
+    for ps in data:
+        product = get_product(ps[0])
+        ps_total = 0
+        for s in filter_by_month(ps[1], month):
+            refund = get_sale(s)[-1]
+            if refund == 0 :
+                ps_total += product[2]
+        result.append([ps[0], ps_total])
+    result.sort(key=lambda p: p[-1], reverse=True)
+    return result
+
+
 def most_revenue(categories:list=['procesadores']) -> list:
     """
     returns: product revenue list per categories
     """
     result = total_revenue()
     result.sort(key=lambda p: p[-1], reverse=True)
-    return filter_by_categories(total_revenue(), categories)
+    return filter_by_categories(result, categories)
 
 
 def least_revenue(categories:list=['procesadores']) -> list:
@@ -258,18 +293,18 @@ def least_revenue(categories:list=['procesadores']) -> list:
     """
     result = total_revenue()
     result.sort(key=lambda p: p[-1], reverse=False)
-    return filter_by_categories(total_revenue(False), categories)
+    return filter_by_categories(result, categories)
 
 
 #### TESTING
 def test():
     cat = ['procesadores', 'audifonos']
     
-    sold = most_sold(cat)
-    print(f'most_sold {get_categories(sold)}:')
+    sold = least_sold(cat)[:50]
+    print(f'least_sold {get_categories(sold)}:')
     print(sold)
     
-    searched = most_searched(cat)
+    searched = most_searched(cat)[:100]
     print(f'most_searched {get_categories(searched)}:')
     print(searched)
     
@@ -277,7 +312,7 @@ def test():
     print(f'lowest_stock {get_categories(stocked)}:')
     print(stocked)
 
-    reviewed = most_reviewed(cat)
+    reviewed = most_reviewed(cat)[:20]
     print(f'most_reviewed {get_categories(reviewed)}:')
     print(reviewed)
     
@@ -285,9 +320,13 @@ def test():
     print(f'most_refund {get_categories(refunds)}:')
     print(refunds)
 
-    revenue = most_revenue(cat)
-    print(f'most_revenue {get_categories(revenue)}:')
+    revenue = least_revenue(cat)
+    print(f'least_revenue {get_categories(revenue)}:')
     print(revenue)
+
+    monthly = monthly_revenue(most_sold(cat), '01')
+    print(f'monthly_revenue {get_categories(monthly)}:')
+    print(monthly)
 ####                
 
 
