@@ -78,7 +78,7 @@ def global_sales() -> list:
     return total_sales
 
 
-def monthly_sales(data:list, month:str='01') -> list:
+def monthly_sales(data:list, month:str) -> list:
     """
     data: any list with product_id at [0] and sales_ids at [1]
     returns: monthly filtered sales
@@ -202,19 +202,17 @@ def least_reviewed(data:list, categories:list=['procesadores']) -> list:
 
 
 # Refunds
-def total_refunds(most:bool=True) -> list:
+def total_refunds() -> list:
     """
     returns: refunds per product list
     """
     result = []
     g_sales = global_sales()
     for i in range(len(g_sales)):
-        result.append([g_sales[i][0], []])
+        result.append([g_sales[i][0], 0])
         sales = g_sales[i][1]
         for s in sales:
-            refund = get_sale(s)[-1]
-            if refund > 0:
-                result[i][1].append(refund)
+            result[i][1] += get_sale(s)[-1]
     return result
 
 
@@ -224,7 +222,7 @@ def most_refund(data:list, categories:list=['procesadores']) -> list:
     returns: product refunds list per categories
     """
     result = data[:]
-    result.sort(key=lambda p: len(p[-1]), reverse=True)
+    result.sort(key=lambda p: p[-1], reverse=True)
     return filter_by_categories(result, categories)
 
 
@@ -234,7 +232,7 @@ def least_refund(data:list, categories:list=['procesadores']) -> list:
     returns: product refunds list per categories
     """
     result = data[:]
-    result.sort(key=lambda p: len(p[-1]), reverse=False)
+    result.sort(key=lambda p: p[-1], reverse=False)
     return filter_by_categories(result, categories)
 
 
