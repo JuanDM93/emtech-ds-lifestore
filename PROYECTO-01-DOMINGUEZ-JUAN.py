@@ -26,37 +26,45 @@ def login():
 
 
 # Utils
-def get_product(id:int):
+def get_product(id:int) -> list:
     """
     returns: product object from dataset
     """
     return lifestore_products[id - 1]
 
 
-def get_sale(id:int):
+def get_sale(id:int) -> list:
     """
     returns: sale object from dataset
     """
     return lifestore_sales[id - 1]
 
 
-def get_categories(data:list=lifestore_products):
+def get_categorie(product_id:int) -> str:
     """
-    data: any list with product_id at i:0
-    returns: list with categories from list
+    returns: categorie str from product_id
+    """
+    return lifestore_products[product_id - 1][3]
+        
+
+def get_categories(data:list=lifestore_products) -> list:
+    """
+    data: any list with product_id at [0]
+    returns: categories list from input
     """
     categories = []
     for d in data:
-        cat = get_product(d[0])[3]
+        cat = get_categorie(d[0])
         if cat not in categories:
             categories.append(cat)
     return categories
 
 
-def filter_by_categories(data:list, cats:list=[]):
+def filter_by_categories(data:list, cats:list=[]) -> list:
     """
-    data: any list with products
+    data: any list with product_id at [0]
     cats: a custom categories list
+    returns: list of products objects filtered by cats
     """
     result = []
     for d in data:
@@ -66,60 +74,49 @@ def filter_by_categories(data:list, cats:list=[]):
     return result
 
 
-# Total Sales
-def global_sales(most:bool=True):
+# Sales
+def global_sales(most:bool=True) -> list:
     """
     most: True=Order by most, False:Order by less
     returns: sorted list by total sales
-    """    
-    total_sales = []
-    for p in lifestore_products:
-        my_p = p[:1]
-        sales = 0
-        for sale in lifestore_sales:
-            if p[0] == sale[1]:
-                sales += 1
-        my_p.append(sales)
-        total_sales.append(my_p)
+    """
+    total_sales = [[p[0], []] for p in lifestore_products]
+    for sale in lifestore_sales:
+        total_sales[sale[1] - 1][1].append(sale[0])
     
-    total_sales.sort(key=lambda p: p[-1], reverse=most)
+    total_sales.sort(key=lambda p: len(p[-1]), reverse=most)
     return total_sales
 
 
-# Sales By Category
-def most_sold(categories:list=['procesadores']):
+def most_sold(categories:list=['procesadores']) -> list:
     """
-    categories = [
-        'procesadores', 'tarjetas de video', 'tarjetas madre',
-        'discos duros', 'memorias usb', 'pantallas', 'bocinas', 'audifonos'
-        ]
     returns: sorted most sold products list by category
     """
     return filter_by_categories(global_sales(), categories)
 
 
-# Total Searches
-def global_searches(most:bool=True):
+def least_sold(categories:list=['procesadores']) -> list:
+    """
+    returns: sorted least sold products list by category
+    """
+    return filter_by_categories(global_sales(False), categories)
+
+
+# Searches
+def global_searches(most:bool=True) -> list:
     """
     most: True=Order by most, False:Order by less
     returns: sorted list by total searches
-    """    
-    total_searches = []
-    for p in lifestore_products:
-        my_p = p[:1]
-        searches = 0
-        for search in lifestore_searches:
-            if p[0] == search[1]:
-                searches += 1
-        my_p.append(searches)
-        total_searches.append(my_p)
+    """ 
+    total_searches = [[p[0], []] for p in lifestore_products]
+    for search in lifestore_searches:
+        total_searches[search[1] - 1][1].append(search[0])
     
-    total_searches.sort(key=lambda p: p[-1], reverse=most)
+    total_searches.sort(key=lambda p: len(p[-1]), reverse=most)
     return total_searches
 
 
-# Searches By Category
-def most_searched(categories:list=['procesadores']):
+def most_searched(categories:list=['procesadores']) -> list:
     """
     categories = [
         'procesadores', 'tarjetas de video', 'tarjetas madre',
@@ -130,8 +127,15 @@ def most_searched(categories:list=['procesadores']):
     return filter_by_categories(global_searches(), categories)
 
 
-# Total Stocks
-def global_stocks(most:bool=False):
+def least_searched(categories:list=['procesadores']) -> list:
+    """
+    returns: sorted least searched products list by category
+    """
+    return filter_by_categories(global_searches(False), categories)
+
+
+# Stocks
+def global_stocks(most:bool=False) -> list:
     """
     most: True=Order by most, False:Order by less
     returns: products in stock 
@@ -141,8 +145,7 @@ def global_stocks(most:bool=False):
     return lows
 
 
-# Stocks By Category
-def lowest_stock(categories:list=['procesadores']):
+def lowest_stock(categories:list=['procesadores']) -> list:
     """
     low_limit: how low to warn
     returns: sorted low stock products list by category
@@ -150,23 +153,70 @@ def lowest_stock(categories:list=['procesadores']):
     return filter_by_categories(global_stocks(), categories)
 
 
-#### TESTING
-def test():
-    print('most_sold:')
-    print(most_sold())
-
-    print('most_searched')
-    print(most_searched())
-    
-    print('lowest_stock')
-    print(lowest_stock())
-####
+def most_stock(categories:list=['procesadores']) -> list:
+    """
+    low_limit: how low to warn
+    returns: sorted low stock products list by category
+    """
+    return filter_by_categories(global_stocks(True), categories)
 
 
 # Reviews
-def reviews():
-    best_reviewed = None
-    worst_reviewed = None
+def total_reviewed(most:bool=True) -> list:
+    """
+    returns: reviews per product list
+    """
+    result = []
+    g_sales = global_sales()
+    for i in range(len(g_sales)):
+        result.append([g_sales[i][0], []])
+        sales = g_sales[i][1]
+        for s in sales:
+            review = get_sale(s)[2]
+            result[i][1].append(review)
+    
+    result.sort(key=lambda p: len(p[-1]), reverse=most)
+    return result
+
+
+def most_reviewed(categories:list=['procesadores']) -> list:
+    """
+    returns: product reviews list per categories
+    """
+    return filter_by_categories(total_reviewed(), categories)
+
+
+def least_reviewed(categories:list=['procesadores']) -> list:
+    """
+    returns: product reviews list per categories
+    """
+    return filter_by_categories(total_reviewed(False), categories)
+
+
+#### TESTING
+def test():
+    cat = ['procesadores', 'audifonos']
+    
+    sold = most_sold(cat)
+    print(f'most_sold {get_categories(sold)}:')
+    print(sold)
+    
+    searched = most_searched(cat)
+    print(f'most_searched {get_categories(searched)}:')
+    print(searched)
+    
+    stocked = lowest_stock(cat)
+    print(f'lowest_stock {get_categories(stocked)}:')
+    print(stocked)
+
+    reviewed = most_reviewed(cat)
+    print(f'most_reviewed {get_categories(reviewed)}:')
+    print(reviewed)
+####
+
+
+def refunds():
+    pass
 
 
 # Revenue
@@ -182,7 +232,10 @@ def revenue():
 
 # main program
 def main():
-    login()
+    # GLOBALS
+    CATEGORIES = get_categories()
+    
+    #login()
     test()
 
 
