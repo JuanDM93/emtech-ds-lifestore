@@ -15,12 +15,12 @@ def test():
     sales = global_sales()
     sold = least_sold(sales, cat)[:50]
     print(f'least_sold {get_categories(sold)}:')
-    print(sold)
+    print(count_empty(sold))
     
     searches = global_searches()
     searched = most_searched(searches, cat)[:100]
     print(f'most_searched {get_categories(searched)}:')
-    print(searched)
+    print(count_empty(searched))
     
     stockes = global_stocks()
     stocked = lowest_stock(stockes, cat)
@@ -30,7 +30,7 @@ def test():
     reviews = total_reviewes()
     reviewed = most_reviewed(reviews, cat)[:20]
     print(f'most_reviewed {get_categories(reviewed)}:')
-    print(reviewed)
+    print(count_empty(reviewed))
     
     refs = total_refunds()
     refunds = most_refund(refs, cat)
@@ -44,8 +44,9 @@ def test():
 
     monthly = monthly_sales(most_sold(sales, cat), '01')
     print(f'monthly_sales {get_categories(monthly)}:')
-    print(monthly)
+    print(clean_empty(monthly))
 ####
+
 
 # main program
 def main():

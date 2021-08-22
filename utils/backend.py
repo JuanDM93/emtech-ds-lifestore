@@ -2,6 +2,7 @@
 Backend modules
 """
 # Datasets
+from utils.frontend import login
 from .lifestore_file import lifestore_searches, lifestore_sales, lifestore_products
 
 
@@ -41,6 +42,23 @@ def get_categories(data:list=lifestore_products) -> list:
 
 
 # Filters
+def clean_empty(data:list) -> list:
+    """
+    data: any list with id at [0] and to_clean_list at [1]
+    returns: clean list (remove [])
+    """
+    return [d for d in data if len(d[1]) > 0]
+
+
+def count_empty(data:list) -> list:
+    """
+    data: any list with id at [0] and to_clean_list at [1]
+    returns: count list ([] -> 0, [...] -> len([...]))
+    """
+    result = [[d[0], len(d[1])] for d in data]
+    return result
+
+
 def filter_by_categories(data:list, cats:list) -> list:
     """
     data: any list with product_id at [0]
