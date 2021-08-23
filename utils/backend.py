@@ -55,8 +55,7 @@ def count_empty(data:list) -> list:
     data: any list with id at [0] and to_count_list at [1]
     returns: count list ([] -> 0, [...] -> len([...]))
     """
-    result = [[d[0], len(d[1])] for d in data]
-    return result
+    return [[d[0], len(d[1])] for d in data]
 
 
 def filter_by_categories(data:list, cats:list) -> list:
@@ -65,13 +64,7 @@ def filter_by_categories(data:list, cats:list) -> list:
     cats: a custom categories list
     returns: list of products filtered by cats
     """
-    result = []
-    for d in data:
-        c = get_categorie(d[0])
-        if c in cats:
-            result.append(d)
-    #result = [d for d in data if get_categorie(d[0]) in cats]
-    return result
+    return [d for d in data if get_categorie(d[0]) in cats]
 
 
 def filter_by_month(data:list, month:str) -> list:

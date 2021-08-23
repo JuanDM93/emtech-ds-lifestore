@@ -20,10 +20,3 @@ def login():
         print('Login failed... try again')
         admin, secret = ask()
     print('Login succesful!')
-
-
-def revenue():
-    average_revenue = None
-    average_sells = None
-    
-    best_months = None

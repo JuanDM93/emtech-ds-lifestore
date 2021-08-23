@@ -1,12 +1,12 @@
 # EMTECH DS Project 1
 
-Project 1 : Basic Python Solution
+Project 1 : LifeStore Reports (Python)
 
 ## Description
 
 This is a basic demo built on [python](https://www.python.org/). It solves an specific case study using data science concepts.
 
-## Run options
+## Run it
 
 ### Local python virtual environment
 
@@ -22,6 +22,10 @@ Move into project directory, then run service
 ```bash
 python PROYECTO-01-DOMINGUEZ-JUAN.py
 ```
+
+## More info
+
+Check out the PDF file on this repo for more details
 
 ## Contributing
 
