@@ -49,15 +49,15 @@ def global_searches()->list:
 
 
 ## Filters
-def clean_list(data:list)->list:
+def clean_list(data:list, reverse:bool=True)->list:
     """
     data: any list with id at [0] and to_clean_list at [-1]
-    returns: remove [] or count list ([...] -> len([...]))
+    count: True -> remove [], False -> remove 0s
+    returns: clean list
     """
-    result = [d for d in data if len(d[1]) > 0]
-    if len(result) > 0:
-        return result
-    return []
+    if reverse:
+        return [d for d in data if len(d[1]) > 0]
+    return [d for d in data if len(d[1]) == 0]
 
 
 def custom_sort(data:list, reverse:bool=True)->list:
