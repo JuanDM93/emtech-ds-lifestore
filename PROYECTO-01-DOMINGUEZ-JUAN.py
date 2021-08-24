@@ -10,8 +10,11 @@ from utils.backend import get_categories
 
 # main program
 def main():
-    #login()
-    
+    """
+    login interface
+    report by categories
+    """
+    login()
     CATEGORIES = get_categories()
     report(CATEGORIES)
 
