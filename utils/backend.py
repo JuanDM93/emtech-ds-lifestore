@@ -25,7 +25,7 @@ def get_categorie(product_id:int)->str:
     returns: categorie str from product_id
     """
     return lifestore_products[product_id - 1][3]
-        
+
 
 ## Global Getters
 def global_sales()->list:
@@ -48,104 +48,16 @@ def global_searches()->list:
     return total_searches
 
 
-## Custom Getters
-def get_products(data:list)->list:
-    """
-    data: any list with product_id at [0]
-    returns: custom full product list
-    """
-    return clean_list([get_product(d[0]) for d in data])
-
-
-def get_sales(data:list)->list:
-    """
-    data: any list with sales_id at [0]
-    returns: custom full sales list
-    """
-    return clean_list([get_sale(d[0]) for d in data])
-
-
-def get_categories(data:list=lifestore_products)->list:
-    """
-    data: any list with product_id at [0]
-    returns: categories list from input
-    """
-    categories = []
-    for d in data:
-        cat = get_categorie(d[0])
-        if cat not in categories:
-            categories.append(cat)
-    return categories
-
-
-def get_stocks(data:list)->list:
-    """
-    data: any list with product_id at [0]
-    returns: stocks per product -> [p_id, stock]
-    """
-    stocks = []
-    for d in data:
-        p = get_product(d[0])
-        stocks.append([p[0], p[-1]])
-    return stocks
-
-
-def get_reviews(data:list)->list:
-    """
-    data: any list with product_id at [0] with sales_ids at [1]
-    returns: reviews per product list -> [p_id, [review1, ...]]
-    """
-    result = []
-    for d in data:
-        reviews = []
-        for s in d[1]:
-            review = get_sale(s)[2]
-            reviews.append(review)
-        result.append([d[0], reviews])
-    return clean_list(result)
-
-
-def get_refunds(data:list)->list:
-    """
-    data: any list with product_id at [0] with sales_ids at [1]
-    returns: refunds per product list -> [p_id, refunds]
-    """
-    result = []
-    for d in data:
-        sum = 0
-        for s in d[1]:
-            sum += get_sale(s)[-1]
-        result.append([d[0], sum])
-    return result
-
-
-def get_revenue(data:list)->list:
-    """
-    data: any list with product_id at [0] with [sales_ids] at [1]
-    returns: total revenue per product list -> [p_id, revenue]
-    """
-    revenue = []
-    for d in data:
-        product = get_product(d[0])
-        total = 0
-        for s in d[1]:
-            refund = get_sale(s)[-1]
-            if refund == 0:
-                total += product[2]
-        revenue.append([d[0], total])
-    return revenue
-
-
 ## Filters
-def clean_list(data:list, remove:bool=True)->list:
+def clean_list(data:list)->list:
     """
     data: any list with id at [0] and to_clean_list at [-1]
-    remove: clean list (remove [])
-    not remove: count list ([...] -> len([...]))
+    returns: remove [] or count list ([...] -> len([...]))
     """
-    if remove:
-        return [d for d in data if len(d[1]) > 0]
-    return [[d[0], len(d[1])] for d in data]
+    result = [d for d in data if len(d[1]) > 0]
+    if len(result) > 0:
+        return result
+    return []
 
 
 def custom_sort(data:list, reverse:bool=True)->list:
@@ -186,4 +98,92 @@ def filter_months(data:list, months:list)->list:
             if s_date in months:
                 sales.append(s)
         result.append([d[0], sales])
-    return clean_list(result)
+    return result
+
+
+## Custom Getters
+def get_categories(data:list=lifestore_products)->list:
+    """
+    data: any list with product_id at [0]
+    returns: categories list from input
+    """
+    categories = []
+    for d in data:
+        cat = get_categorie(d[0])
+        if cat not in categories:
+            categories.append(cat)
+    return categories
+
+
+def get_products(data:list)->list:
+    """
+    data: any list with product_id at [0]
+    returns: custom full product list
+    """
+    return [get_product(d[0]) for d in data]
+
+
+def get_sales(data:list)->list:
+    """
+    data: any list with sales_id at [0]
+    returns: custom full sales list
+    """
+    return [get_sale(d[0]) for d in data]
+
+
+def get_stocks(data:list)->list:
+    """
+    data: any list with product_id at [0]
+    returns: stocks per product -> [p_id, stock]
+    """
+    stocks = []
+    for d in data:
+        p = get_product(d[0])
+        stocks.append([p[0], p[-1]])
+    return stocks
+
+
+def get_reviews(data:list)->list:
+    """
+    data: any list with product_id at [0] with sales_ids at [1]
+    returns: reviews per product list -> [p_id, [review1, ...]]
+    """
+    result = []
+    for d in data:
+        reviews = []
+        for s in d[1]:
+            review = get_sale(s)[2]
+            reviews.append(review)
+        result.append([d[0], reviews])
+    return result
+
+
+def get_refunds(data:list)->list:
+    """
+    data: any list with product_id at [0] with sales_ids at [1]
+    returns: refunds per product list -> [p_id, refunds]
+    """
+    result = []
+    for d in data:
+        sum = 0
+        for s in d[1]:
+            sum += get_sale(s)[-1]
+        result.append([d[0], sum])
+    return result
+
+
+def get_revenue(data:list)->list:
+    """
+    data: any list with product_id at [0] with [sales_ids] at [1]
+    returns: total revenue per product list -> [p_id, revenue]
+    """
+    revenue = []
+    for d in data:
+        product = get_product(d[0])
+        total = 0
+        for s in d[1]:
+            refund = get_sale(s)[-1]
+            if refund == 0:
+                total += product[2]
+        revenue.append([d[0], total])
+    return revenue
