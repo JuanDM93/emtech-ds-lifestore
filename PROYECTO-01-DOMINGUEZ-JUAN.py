@@ -12,41 +12,46 @@ from utils.backend import *
 def test():
     cats = ['procesadores', 'audifonos']
     
-    sales = global_sales()
-    sold = least_sold(sales)
-    sold = filter_by_categories(sold, cats)[:50]
-    print(f'least_sold {get_categories(sold)}:')
-    print(count_empty(sold))
-    
-    searches = global_searches()
-    searched = filter_by_categories(most_searched(searches), cats)[:100]
-    print(f'most_searched {get_categories(searched)}:')
-    print(count_empty(searched))
-    
-    stocks = global_stocks()
-    stocked = filter_by_categories(lowest_stock(stocks), cats)
-    print(f'lowest_stock {get_categories(stocked)}:')
-    print(stocked)
+    searches = clean_list(global_searches())
+    cats_searched = filter_categories(searches, cats)
+    most_searched = custom_sort(cats_searched)[:10]
+    print(f'most_searched {get_categories(most_searched)}:')
+    print(most_searched)
 
-    reviews = total_reviewes()
-    reviewed = filter_by_categories(most_reviewed(reviews), cats)[:20]
-    print(f'most_reviewed {get_categories(reviewed)}:')
-    print(count_empty(reviewed))
+    sales = clean_list(global_sales())
+    cats_sold = filter_categories(sales, cats)
+    least_sold = custom_sort(cats_sold, False)[:10]
+    print(f'least_sold {get_categories(least_sold)}:')
+    print(least_sold)
+
+    monthly_sold = filter_months(cats_sold, '01')
+    most_sold = custom_sort(monthly_sold)[:10]
+    print(f'monthly_sales {get_categories(most_sold)}:')
+    print(most_sold)
     
-    refs = total_refunds()
-    refunds = filter_by_categories(most_refund(refs), cats)
-    print(f'most_refund {get_categories(refunds)}:')
-    print(refunds)
+    stocks = get_stocks(sales)
+    cats_stocked = filter_categories(stocks, cats)
+    lowest_stock = custom_sort(cats_stocked, False)
+    print(f'lowest_stock {get_categories(lowest_stock)}:')
+    print(lowest_stock)
 
-    revenues = total_revenue()
-    revenue = filter_by_categories(least_revenue(revenues), cats)
-    print(f'least_revenue {get_categories(revenue)}:')
-    print(revenue)
+    reviews = get_reviews(sales)
+    cats_reviewed = filter_categories(reviews, cats)
+    most_reviewed = custom_sort(cats_reviewed)[:10]
+    print(f'most_reviewed {get_categories(most_reviewed)}:')
+    print(most_reviewed)
+    
+    refunds = get_refunds(sales)
+    cats_refunds = filter_categories(refunds, cats)
+    most_refund = custom_sort(cats_refunds)
+    print(f'most_refund {get_categories(most_refund)}:')
+    print(most_refund)
 
-    months = filter_by_categories(most_sold(sales), cats)
-    monthly = filter_by_month(months, '01')
-    print(f'monthly_sales {get_categories(monthly)}:')
-    print(clean_empty(monthly))
+    revenues = get_revenue(sales)
+    cats_revenue = filter_categories(revenues, cats)
+    least_revenue = custom_sort(cats_revenue, False)
+    print(f'least_revenue {get_categories(least_revenue)}:')
+    print(least_revenue)
 ####
 
 
