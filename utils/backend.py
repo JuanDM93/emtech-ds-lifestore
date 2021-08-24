@@ -5,30 +5,30 @@ Backend modules
 from .lifestore_file import lifestore_searches, lifestore_sales, lifestore_products
 
 
-## Single Getters
-def get_product(id:int)->list:
+# Single Getters
+def get_product(id: int) -> list:
     """
     returns: product object from dataset
     """
     return lifestore_products[id - 1]
 
 
-def get_sale(id:int)->list:
+def get_sale(id: int) -> list:
     """
     returns: sale object from dataset
     """
     return lifestore_sales[id - 1]
 
 
-def get_categorie(product_id:int)->str:
+def get_categorie(product_id: int) -> str:
     """
     returns: categorie str from product_id
     """
     return lifestore_products[product_id - 1][3]
 
 
-## Global Getters
-def global_sales()->list:
+# Global Getters
+def global_sales() -> list:
     """
     returns: total sales list by product -> [p_id, [sales, ...]]
     """
@@ -38,18 +38,18 @@ def global_sales()->list:
     return total_sales
 
 
-def global_searches()->list:
+def global_searches() -> list:
     """
     returns: total search list by product -> [p_id, [searches, ...]]
-    """ 
+    """
     total_searches = [[p[0], []] for p in lifestore_products]
     for search in lifestore_searches:
         total_searches[search[1] - 1][1].append(search[0])
     return total_searches
 
 
-## Filters
-def clean_list(data:list, reverse:bool=True)->list:
+# Filters
+def clean_list(data: list, reverse: bool = True) -> list:
     """
     data: any list with id at [0] and to_clean_list at [-1]
     count: True -> remove [], False -> remove 0s
@@ -60,7 +60,7 @@ def clean_list(data:list, reverse:bool=True)->list:
     return [d for d in data if len(d[1]) == 0]
 
 
-def custom_sort(data:list, reverse:bool=True)->list:
+def custom_sort(data: list, reverse: bool = True) -> list:
     """
     data: any list with id at [0] and to_sort_list at [-1]
     reverse: ordering type, default -> most
@@ -74,7 +74,7 @@ def custom_sort(data:list, reverse:bool=True)->list:
     return result
 
 
-def filter_categories(data:list, cats:list)->list:
+def filter_categories(data: list, cats: list) -> list:
     """
     data: any list with product_id at [0]
     cats: a custom categories list
@@ -83,7 +83,7 @@ def filter_categories(data:list, cats:list)->list:
     return [d for d in data if get_categorie(d[0]) in cats]
 
 
-def filter_months(data:list, months:list)->list:
+def filter_months(data: list, months: list) -> list:
     """
     data: any list with product_id at [0] and sales_ids at [1]
     months: ['01', ..., '12']
@@ -101,8 +101,8 @@ def filter_months(data:list, months:list)->list:
     return result
 
 
-## Custom Getters
-def get_categories(data:list=lifestore_products)->list:
+# Custom Getters
+def get_categories(data: list = lifestore_products) -> list:
     """
     data: any list with product_id at [0]
     returns: categories list from input
@@ -115,7 +115,7 @@ def get_categories(data:list=lifestore_products)->list:
     return categories
 
 
-def get_products(data:list)->list:
+def get_products(data: list) -> list:
     """
     data: any list with product_id at [0]
     returns: custom full product list
@@ -123,7 +123,7 @@ def get_products(data:list)->list:
     return [get_product(d[0]) for d in data]
 
 
-def get_sales(data:list)->list:
+def get_sales(data: list) -> list:
     """
     data: any list with sales_id at [0]
     returns: custom full sales list
@@ -131,7 +131,7 @@ def get_sales(data:list)->list:
     return [get_sale(d[0]) for d in data]
 
 
-def get_stocks(data:list)->list:
+def get_stocks(data: list) -> list:
     """
     data: any list with product_id at [0]
     returns: stocks per product -> [p_id, stock]
@@ -143,7 +143,7 @@ def get_stocks(data:list)->list:
     return stocks
 
 
-def get_reviews(data:list)->list:
+def get_reviews(data: list) -> list:
     """
     data: any list with product_id at [0] with sales_ids at [1]
     returns: reviews per product list -> [p_id, [review1, ...]]
@@ -158,7 +158,7 @@ def get_reviews(data:list)->list:
     return result
 
 
-def get_refunds(data:list)->list:
+def get_refunds(data: list) -> list:
     """
     data: any list with product_id at [0] with sales_ids at [1]
     returns: refunds per product list -> [p_id, refunds]
@@ -172,7 +172,7 @@ def get_refunds(data:list)->list:
     return result
 
 
-def get_revenue(data:list)->list:
+def get_revenue(data: list) -> list:
     """
     data: any list with product_id at [0] with [sales_ids] at [1]
     returns: total revenue per product list -> [p_id, revenue]

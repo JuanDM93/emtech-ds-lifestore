@@ -17,7 +17,7 @@ def login():
         admin = input('Input admin user: ')
         secret = input('Password: ')
         return admin, secret
-    
+
     admin, secret = ask()
     while 'admin' != admin or 'pass' != secret:
         print('Login failed... try again')
@@ -33,8 +33,8 @@ def report(cats):
         test(c)
 
 
-#### TESTING
-def test(c:str):
+# TESTING
+def test(c: str):
     separator = '\n----------\n'
     cats = [c]
 
@@ -48,7 +48,7 @@ def test(c:str):
         most_searched = custom_sort(cats_searched)[:10]
         print('* most_searched:')
         print(most_searched)
-        
+
         least_searched = custom_sort(cats_searched, False)[:10]
         print('* least_searched:')
         print(least_searched)
@@ -58,7 +58,7 @@ def test(c:str):
     print('sales:')
     sales = global_sales()
     cats_sold = filter_categories(sales, cats)
-    
+
     if len(cats_sold) > 0:
         total_most_sold = custom_sort(cats_sold)[:10]
         print('* total_most_sold:')
@@ -100,7 +100,7 @@ def test(c:str):
         most_stock = custom_sort(cats_stocked)
         print('* most_stock:')
         print(most_stock)
-        
+
         lowest_stock = custom_sort(cats_stocked, False)
         print('* lowest_stock:')
         print(lowest_stock)
