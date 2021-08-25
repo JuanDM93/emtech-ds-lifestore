@@ -58,18 +58,14 @@ def print_options(options: list) -> list:
             continue
         valids.append(a)
 
+    print(separator)
     for e in errors[1]:
-        print(separator)
         print(f'ERROR: Wrong input "{e}"\n')
-        
+
     for w in errors[0]:
-        print(separator)
         print(f'WARNING: "{w}"" is not a valid option\n')
-            
-    for v in valids:
-        print(separator)
-        print(f'INFO: validated input "{a}"\n')
-    
+
+    print(separator)
     return valids
 
 
@@ -78,18 +74,19 @@ def manual():
     """
     Prints manual report
     """
-    separator = '**********\n'
+    separator = '++++++++++\n'
     print(separator)
     print('Hi, what would you like to do?\n')
     response = print_options(PROCESSES)
     for r in response:
+        print(separator)
         if r == 0:
             print(f'INFO: Running "{PROCESSES[r]}" process\n')
             ask_cats()
-            print(separator)
         else:
-            print(f'ERROR: Process "{PROCESSES[r]}" not yet available\n')
-            print(separator)
+            print(
+                f'ERROR: Process [{r}] - "{PROCESSES[r]}" - not yet available\n')
+        print(separator)
 
 
 def ask_cats():

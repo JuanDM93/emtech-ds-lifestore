@@ -11,7 +11,6 @@ from utils.frontend import login, manual
 def main():
     """
     login and report interface
-
     """
     # Login
     login()
