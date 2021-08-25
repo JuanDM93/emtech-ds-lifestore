@@ -4,6 +4,9 @@ Frontend modules
 from .backend import *
 
 
+CATEGORIES = get_categories()
+
+
 # Login
 def login():
     """
@@ -21,16 +24,54 @@ def login():
     admin, secret = ask()
     while 'admin' != admin or 'pass' != secret:
         print('Login failed... try again')
+        print()
         admin, secret = ask()
     print('Login succesful!')
+    print()
 
 
+# Category selector
+def ask_cats():
+    def cats_selector():
+        print('Select categories indices: 1,5,6,...')
+        options = [(i, CATEGORIES[i]) for i in range(len(CATEGORIES))]
+        for o in options:
+            print(f'{o[0]}: {o[-1]}')
+
+    separator = '\n**********\n'
+    response = []
+    flag = True
+    while flag:
+        cats_selector()
+        responses = input('cats: ')
+        responses = responses.split(',')
+        for r in responses:
+            try:
+                # Report
+                r = int(r)
+                if r < 0 or r > 7:
+                    print(separator)
+                    print(f'WARNING: "{r}"" is not a valid option')
+                    print()
+                    continue
+                response = CATEGORIES[r]
+                report([response])
+            except ValueError:
+                print(separator)
+                print(f'ERROR: Wrong input "{r}"')
+                print()
+                continue
+        flag = False
+
+
+# Report
 def report(cats):
     separator = '\n-------------------\n'
     for c in cats:
         print(separator)
         print(f'"{c} Report" ->')
         test(c)
+    print(separator)
 
 
 # TESTING
@@ -38,9 +79,10 @@ def test(c: str):
     separator = '\n----------\n'
     cats = [c]
 
-    # Search
+    # Searches
     print(separator)
     print('searches:')
+    print()
     searches = global_searches()
     cats_searched = filter_categories(searches, cats)
 
@@ -48,14 +90,17 @@ def test(c: str):
         most_searched = custom_sort(cats_searched)[:10]
         print('* most_searched:')
         print(most_searched)
+        print()
 
         least_searched = custom_sort(cats_searched, False)[:10]
         print('* least_searched:')
         print(least_searched)
+        print()
 
-    # Sale
+    # Sales
     print(separator)
     print('sales:')
+    print()
     sales = global_sales()
     cats_sold = filter_categories(sales, cats)
 
@@ -63,71 +108,86 @@ def test(c: str):
         total_most_sold = custom_sort(cats_sold)[:10]
         print('* total_most_sold:')
         print(total_most_sold)
+        print()
 
         total_least_sold = custom_sort(cats_sold, False)[:10]
         print('* total_least_sold:')
         print(total_least_sold)
+        print()
 
         print('* historic:')
-        for m in range(1, 2):
+        print()
+        for m in range(1, 13):
             month = f'{m:02d}'
-            print(f'* - monthly_sales_{month}:')
+            print(f'- - monthly_sales_{month}:')
             monthly_sold = filter_months(cats_sold, month)
             if len(monthly_sold) > 0:
                 most_sold = custom_sort(monthly_sold)
                 print(most_sold)
+                print()
 
-    # Review
+    # Reviews
     print(separator)
     print('reviews:')
+    print()
     reviews = get_reviews(sales)
     cats_reviewed = filter_categories(reviews, cats)
     if len(cats_reviewed) > 0:
         most_reviewed = custom_sort(cats_reviewed)
         print('* most_reviewed:')
         print(most_reviewed)
+        print()
 
         least_reviewed = custom_sort(cats_reviewed, False)
         print('* least_reviewed:')
         print(least_reviewed)
+        print()
 
-    # Stock
+    # Stocks
     print(separator)
     print('stocks:')
+    print()
     stocks = get_stocks(sales)
     cats_stocked = filter_categories(stocks, cats)
     if len(cats_stocked) > 0:
         most_stock = custom_sort(cats_stocked)
         print('* most_stock:')
         print(most_stock)
+        print()
 
         lowest_stock = custom_sort(cats_stocked, False)
         print('* lowest_stock:')
         print(lowest_stock)
+        print()
 
     # Refunds
     print(separator)
     print('refunds:')
+    print()
     refunds = get_refunds(sales)
     cats_refunds = filter_categories(refunds, cats)
     if len(cats_refunds) > 0:
         most_refund = custom_sort(cats_refunds)
         print('* most_refund:')
         print(most_refund)
+        print()
 
         least_refund = custom_sort(cats_refunds, False)
         print('* least_refund:')
         print(least_refund)
+        print()
 
     # Revenue
     print(separator)
     print('revenue:')
+    print()
     revenues = get_revenue(sales)
     cats_revenue = filter_categories(revenues, cats)
     if len(cats_revenue) > 0:
         most_revenue = custom_sort(cats_revenue)
         print('* most_revenue:')
         print(most_revenue)
+        print()
 
         least_revenue = custom_sort(cats_revenue, False)
         print('* least_revenue:')

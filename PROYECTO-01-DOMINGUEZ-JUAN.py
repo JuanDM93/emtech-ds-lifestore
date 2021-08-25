@@ -4,8 +4,7 @@ This is a basic python based data science solution
 author: juan_dm93@hotmail.com
 """
 # Imports
-from utils.frontend import login, report
-from utils.backend import get_categories
+from utils.frontend import login, ask_cats
 
 
 # main program
@@ -14,9 +13,11 @@ def main():
     login interface
     report by categories
     """
+    # Login
     login()
-    CATEGORIES = get_categories()
-    report(CATEGORIES)
+
+    # Input categories
+    ask_cats()
 
 
 if __name__ == "__main__":
