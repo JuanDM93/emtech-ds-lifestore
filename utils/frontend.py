@@ -23,11 +23,9 @@ def login():
 
     admin, secret = ask()
     while 'admin' != admin or 'pass' != secret:
-        print('Login failed... try again')
-        print()
+        print('Login failed... try again\n')
         admin, secret = ask()
-    print('Login succesful!')
-    print()
+    print('Login succesful!\n')
 
 
 # Category selector
@@ -55,7 +53,7 @@ def ask_cats():
                     print()
                     continue
                 response = CATEGORIES[r]
-                report([response])
+                report(response)
             except ValueError:
                 print(separator)
                 print(f'ERROR: Wrong input "{r}"')
@@ -65,12 +63,11 @@ def ask_cats():
 
 
 # Report
-def report(cats):
+def report(cat:str):
     separator = '\n-------------------\n'
-    for c in cats:
-        print(separator)
-        print(f'"{c} Report" ->')
-        test(c)
+    print(separator)
+    print(f'"{cat} Report" ->')
+    test(cat)
     print(separator)
 
 
