@@ -4,20 +4,20 @@ This is a basic python based data science solution
 author: juan_dm93@hotmail.com
 """
 # Imports
-from utils.frontend import login, ask_cats
+from utils.frontend import login, manual
 
 
 # main program
 def main():
     """
-    login interface
-    report by categories
+    login and report interface
+
     """
     # Login
     login()
 
-    # Input categories
-    ask_cats()
+    # Report
+    manual()
 
 
 if __name__ == "__main__":

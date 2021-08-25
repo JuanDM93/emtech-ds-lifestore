@@ -1,5 +1,5 @@
 """
-Backend modules
+Backend module
 """
 # Datasets
 from .lifestore_file import lifestore_searches, lifestore_sales, lifestore_products
@@ -46,59 +46,6 @@ def global_searches() -> list:
     for search in lifestore_searches:
         total_searches[search[1] - 1][1].append(search[0])
     return total_searches
-
-
-# Filters
-def clean_list(data: list, reverse: bool = True) -> list:
-    """
-    data: any list with id at [0] and to_clean_list at [-1]
-    count: True -> remove [], False -> remove 0s
-    returns: clean list
-    """
-    if reverse:
-        return [d for d in data if len(d[1]) > 0]
-    return [d for d in data if len(d[1]) == 0]
-
-
-def custom_sort(data: list, reverse: bool = True) -> list:
-    """
-    data: any list with id at [0] and to_sort_list at [-1]
-    reverse: ordering type, default -> most
-    returns: sorted custom list
-    """
-    result = data[:]
-    if type(result[0][-1]) is int:
-        result.sort(key=lambda p: p[-1], reverse=reverse)
-    else:
-        result.sort(key=lambda p: len(p[-1]), reverse=reverse)
-    return result
-
-
-def filter_categories(data: list, cats: list) -> list:
-    """
-    data: any list with product_id at [0]
-    cats: a custom categories list
-    returns: list of products filtered by cats
-    """
-    return [d for d in data if get_categorie(d[0]) in cats]
-
-
-def filter_months(data: list, months: list) -> list:
-    """
-    data: any list with product_id at [0] and sales_ids at [1]
-    months: ['01', ..., '12']
-    returns: list of product sales filtered by month
-    """
-    result = []
-    for d in data:
-        sales = []
-        for s in d[1]:
-            sale = get_sale(s)
-            s_date = sale[3].split('/')[1]
-            if s_date in months:
-                sales.append(s)
-        result.append([d[0], sales])
-    return result
 
 
 # Custom Getters
@@ -187,3 +134,56 @@ def get_revenue(data: list) -> list:
                 total += product[2]
         revenue.append([d[0], total])
     return revenue
+
+
+# Filters
+def clean_list(data: list, reverse: bool = True) -> list:
+    """
+    data: any list with id at [0] and to_clean_list at [-1]
+    count: True -> remove [], False -> remove 0s
+    returns: clean list
+    """
+    if reverse:
+        return [d for d in data if len(d[1]) > 0]
+    return [d for d in data if len(d[1]) == 0]
+
+
+def custom_sort(data: list, reverse: bool = True) -> list:
+    """
+    data: any list with id at [0] and to_sort_list at [-1]
+    reverse: ordering type, default -> most
+    returns: sorted custom list
+    """
+    result = data[:]
+    if type(result[0][-1]) is int:
+        result.sort(key=lambda p: p[-1], reverse=reverse)
+    else:
+        result.sort(key=lambda p: len(p[-1]), reverse=reverse)
+    return result
+
+
+def filter_categories(data: list, cats: list) -> list:
+    """
+    data: any list with product_id at [0]
+    cats: a custom categories list
+    returns: list of products filtered by cats
+    """
+    return [d for d in data if get_categorie(d[0]) in cats]
+
+
+def filter_months(data: list, months: list) -> list:
+    """
+    data: any list with product_id at [0] and sales_ids at [1]
+    months: ['01', ..., '12']
+    returns: list of product sales filtered by month
+    """
+    result = []
+    for d in data:
+        sales = []
+        for s in d[1]:
+            sale = get_sale(s)
+            s_date = sale[3].split('/')[1]
+            if s_date in months:
+                sales.append(s)
+        result.append([d[0], sales])
+    return result
