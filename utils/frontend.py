@@ -29,23 +29,29 @@ def login():
 
 
 # Category selector
-def ask_cats():
-    def cats_selector():
-        print('Select categories indices: 1,5,6,...')
-        options = [(i, CATEGORIES[i]) for i in range(len(CATEGORIES))]
-        for o in options:
-            print(f'{o[0]}: {o[-1]}')
+def cats_options():
+    """
+    Prints categories options
+    """
+    print('Select categories indices: 1,5,6,...')
+    options = [(i, CATEGORIES[i]) for i in range(len(CATEGORIES))]
+    for o in options:
+        print(f'{o[0]}: {o[-1]}')
 
+
+def ask_cats():
+    """
+    Validates categories input and prints report per category
+    """
     separator = '\n**********\n'
     response = []
     flag = True
     while flag:
-        cats_selector()
+        cats_options()
         responses = input('cats: ')
         responses = responses.split(',')
         for r in responses:
             try:
-                # Report
                 r = int(r)
                 if r < 0 or r > 7:
                     print(separator)
@@ -53,7 +59,7 @@ def ask_cats():
                     print()
                     continue
                 response = CATEGORIES[r]
-                report(response)
+                cat_report(response)
             except ValueError:
                 print(separator)
                 print(f'ERROR: Wrong input "{r}"')
@@ -62,8 +68,10 @@ def ask_cats():
         flag = False
 
 
-# Report
-def report(cat:str):
+def cat_report(cat: str):
+    """
+    Prints category report (TESTING)
+    """
     separator = '\n-------------------\n'
     print(separator)
     print(f'"{cat} Report" ->')
@@ -73,6 +81,9 @@ def report(cat:str):
 
 # TESTING
 def test(c: str):
+    """
+    Prints report (TESTING)
+    """
     separator = '\n----------\n'
     cats = [c]
 
