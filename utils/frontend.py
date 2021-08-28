@@ -6,6 +6,7 @@ from .backend import *
 
 PROCESSES = ['cats', 'monthly', 'other']
 CATEGORIES = get_categories()
+DATES = get_dates()
 
 
 # Login
@@ -85,7 +86,7 @@ def manual():
             ask_cats()
         else:
             print(
-                f'ERROR: Process [{r}] - "{PROCESSES[r]}" - not yet available\n')
+                f'ERROR: Sorry, process [{r}] - "{PROCESSES[r]}" - not yet available\n')
         print(separator)
 
 
@@ -156,7 +157,8 @@ def test(c: str):
         for m in range(1, 13):
             month = f'{m:02d}'
             print(f'- - monthly_sales_{month}:')
-            monthly_sold = filter_months(cats_sold, month)
+            monthly_sold = filter_dates(cats_sold, months=[month])
+            
             if len(monthly_sold) > 0:
                 most_sold = custom_sort(monthly_sold)
                 print(most_sold)

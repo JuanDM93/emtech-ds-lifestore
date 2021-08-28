@@ -11,9 +11,9 @@ from utils.frontend import login, manual
 def main():
     """
     login and report interface
+    login()
     """
     # Login
-    login()
 
     # Report
     manual()

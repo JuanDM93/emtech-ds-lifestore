@@ -2,6 +2,7 @@
 Backend module
 """
 # Datasets
+from time import sleep
 from .lifestore_file import lifestore_searches, lifestore_sales, lifestore_products
 
 
@@ -25,6 +26,13 @@ def get_categorie(product_id: int) -> str:
     returns: categorie str from product_id
     """
     return lifestore_products[product_id - 1][3]
+
+
+def get_date(sale_id: str) -> list:
+    """
+    returns: date ['15','09','2020'] by sale_id 
+    """
+    return lifestore_sales[sale_id - 1][3].split('/')
 
 
 # Global Getters
@@ -60,6 +68,14 @@ def get_categories(data: list = lifestore_products) -> list:
         if cat not in categories:
             categories.append(cat)
     return categories
+
+
+def get_dates(data: list = lifestore_sales) -> list:
+    """
+    data: any list with sales_id at [0]
+    returns: dates list from input
+    """
+    return [[d[0], get_date(d[0])] for d in data]
 
 
 def get_products(data: list) -> list:
@@ -171,19 +187,27 @@ def filter_categories(data: list, cats: list) -> list:
     return [d for d in data if get_categorie(d[0]) in cats]
 
 
-def filter_months(data: list, months: list) -> list:
+def filter_date(data: list, dates: list = ['2020']) -> list:
     """
-    data: any list with product_id at [0] and sales_ids at [1]
-    months: ['01', ..., '12']
-    returns: list of product sales filtered by month
+    data: list to filter with dates at [-1]
+    years: dates list filter
+    returns: filtered list by dates
     """
-    result = []
-    for d in data:
-        sales = []
-        for s in d[1]:
-            sale = get_sale(s)
-            s_date = sale[3].split('/')[1]
-            if s_date in months:
-                sales.append(s)
-        result.append([d[0], sales])
-    return result
+    return [[d[0], d[-1][:-1]] for d in data if d[-1][-1] in dates]
+
+
+def filter_dates(
+    data: list, months: list, years: list = ['2020'],  # days: list,
+) -> list:
+    """
+    data: any list with sales_ids at [0]
+    dates: ['01', ..., '12'] ['2001', ..., '2030']
+    returns: list of product sales filtered by date
+    """
+    dates = get_dates(data)
+    dates = filter_date(dates, years)
+    dates = filter_date(dates, months)
+    #dates = filter_date(data, days)
+    if len(dates) == 0:
+        return dates
+    return [d for d in data if d[0] in dates[0]]
