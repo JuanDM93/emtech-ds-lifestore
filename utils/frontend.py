@@ -42,32 +42,69 @@ def login(limit: int = 3) -> bool:
             print(f'Login failed... : {limit}\n')
         else:
             print('Login succesful!\n')
+            sleep(SLEEPING)
             clear()
             interface()
-            break
 
         if limit == 0:
             print('... bye')
             return False
 
 
-# Option printer
+# Report interfece
+def interface():
+    """
+    Prints report options
+    """
+    while True:
+        separator = '++++++++++\n'
+        print(separator)
+        print('Hey, what would you like to do?\n')
+        response = print_options(PROCESSES)
+        while len(response) > 1:
+            sleep(SLEEPING)
+            clear()
+            response = [PROCESSES[r] for r in response]
+            response = print_options(response)
+
+        print(separator)
+        if len(response) > 0:
+            if response[0] > len(PROCESSES):
+                print(
+                    f'ERROR: Sorry, process [{response}] - "{PROCESSES[response]}" - not yet available\n')
+                sleep(SLEEPING)
+            else:
+                print(f'INFO: Running "{PROCESSES[response]}" process\n')
+                sleep(SLEEPING)
+                report(response)
+        else:
+            print(f'WARNING: No valid option selected\n')
+            sleep(SLEEPING)
+        print(separator)
+        clear()
+
+
+# Check exit commands
 def exit_status(answer: list) -> bool:
+    """
+    Checks exit command behaviour
+    """
     answer = answer[0]
-    if answer == 'exit':
+    if answer == EXIT_CMDS[-1]:
         exit()
     else:
-        if answer == 'logout':
+        if answer == EXIT_CMDS[1]:
             clear()
             login()
             return True
-        if answer == 'return':
+        if answer == EXIT_CMDS[0]:
             clear()
             interface()
             return True
         return False
 
 
+# Option printer
 def print_options(options: list) -> list:
     """
     options: ids list
@@ -119,41 +156,6 @@ def print_options(options: list) -> list:
         if v not in result:
             result.append(v)
     return result
-
-
-# Report interfece
-def interface():
-    """
-    Prints report options
-    """
-    while True:
-        separator = '++++++++++\n'
-        print(separator)
-        print('Hey, what would you like to do?\n')
-        response = print_options(PROCESSES)
-        while len(response) > 1:
-            sleep(SLEEPING)
-            clear()
-            response = [PROCESSES[r] for r in response]
-            response = print_options(response)
-
-        print(separator)
-        if len(response) > 0:
-            if exit_status(response[0]):
-                break
-            if response[0] > len(PROCESSES):
-                print(
-                    f'ERROR: Sorry, process [{response}] - "{PROCESSES[response]}" - not yet available\n')
-                sleep(SLEEPING)
-            else:
-                print(f'INFO: Running "{PROCESSES[response]}" process\n')
-                sleep(SLEEPING)
-                report(response)
-        else:
-            print(f'WARNING: No valid option selected\n')
-            sleep(SLEEPING)
-        print(separator)
-        clear()
 
 
 def report(process_id: int = 0):
