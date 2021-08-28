@@ -1,6 +1,7 @@
 """
 Frontend module
 """
+import os
 from time import sleep
 from .backend import *
 
@@ -18,13 +19,6 @@ def login(limit: int = 3) -> bool:
     """
     auth function
     """
-    def clear():
-        """
-        clear screen
-        """
-        import os
-        os.system('clear')
-
     def ask() -> tuple:
         """
         returns: user inputs (admin, secret)
@@ -40,7 +34,7 @@ def login(limit: int = 3) -> bool:
             print(f'Login failed... : {limit}\n')
         else:
             print('Login succesful!\n')
-            clear()
+            os.system('clear')
             return True
 
         if limit == 0:
@@ -51,7 +45,8 @@ def login(limit: int = 3) -> bool:
 # Option printer
 def print_options(options: list) -> list:
     """
-    Prints options list
+    options: ids list
+    returns: response ids list
     """
     separator = '**********\n'
     print(separator)
@@ -105,6 +100,7 @@ def report(process: int = 0):
         globals()
     elif process == 1:
         print('- Categories -\n')
+        ask_cats()
     elif process == 2:
         print('- Datetime -\n')
     else:
@@ -220,12 +216,6 @@ def most_refunds():
 
 
 # By Category
-
-# By Date
-
-#################
-
-
 def ask_cats():
     """
     Validates categories input and prints report per category
@@ -245,6 +235,11 @@ def cat_report(cat: str):
     print(f'"{cat} Report" ->\n')
     test(cat)
     print(separator)
+
+
+# By Date
+
+#################
 
 
 # TESTING
