@@ -1,20 +1,30 @@
 """
 Frontend module
 """
+from time import sleep
 from .backend import *
 
 
+# LOCALS
+SLEEPING = 0.2
+SECRETS = ['admin', 'pass']
 PROCESSES = ['cats', 'monthly', 'other']
 CATEGORIES = get_categories()
 DATES = get_dates()
 
 
 # Login
-def login():
+def login(limit: int = 3) -> bool:
     """
-    admin:  admin
-    secret: pass
+    auth function
     """
+    def clear():
+        """
+        clear screen
+        """
+        import os
+        os.system('clear')
+
     def ask() -> tuple:
         """
         returns: user inputs (admin, secret)
@@ -23,11 +33,19 @@ def login():
         secret = input('Password: ')
         return admin, secret
 
-    admin, secret = ask()
-    while 'admin' != admin or 'pass' != secret:
-        print('Login failed... try again\n')
+    while True:
         admin, secret = ask()
-    print('Login succesful!\n')
+        if admin != SECRETS[0] or secret != SECRETS[1]:
+            limit -= 1
+            print(f'Login failed... : {limit}\n')
+        else:
+            print('Login succesful!\n')
+            clear()
+            return True
+
+        if limit == 0:
+            print('... bye')
+            return False
 
 
 # Option printer
@@ -62,16 +80,18 @@ def print_options(options: list) -> list:
     print(separator)
     for e in errors[1]:
         print(f'ERROR: Wrong input "{e}"\n')
+    sleep(SLEEPING)
 
     for w in errors[0]:
         print(f'WARNING: "{w}"" is not a valid option\n')
+    sleep(SLEEPING)
 
     print(separator)
     return valids
 
 
-# Manual report
-def manual():
+# Interface report
+def interface():
     """
     Prints manual report
     """
@@ -83,12 +103,18 @@ def manual():
         print(separator)
         if r == 0:
             print(f'INFO: Running "{PROCESSES[r]}" process\n')
-            ask_cats()
+            sleep(SLEEPING)
+            #ask_cats()
         else:
             print(
                 f'ERROR: Sorry, process [{r}] - "{PROCESSES[r]}" - not yet available\n')
+            sleep(SLEEPING)
         print(separator)
 
+
+#################
+#   Reports     #
+#################
 
 def ask_cats():
     """

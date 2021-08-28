@@ -2,7 +2,6 @@
 Backend module
 """
 # Datasets
-from time import sleep
 from .lifestore_file import lifestore_searches, lifestore_sales, lifestore_products
 
 
