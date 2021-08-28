@@ -208,6 +208,7 @@ def filter_dates(
     dates = filter_date(dates, years)
     dates = filter_date(dates, months)
     #dates = filter_date(data, days)
+
     if len(dates) == 0:
         return dates
     return [d for d in data if d[0] in dates[0]]
