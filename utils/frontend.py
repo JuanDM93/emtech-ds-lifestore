@@ -8,7 +8,7 @@ from .backend import *
 # LOCALS
 SLEEPING = 0.2
 SECRETS = ['admin', 'pass']
-PROCESSES = ['cats', 'monthly', 'other']
+PROCESSES = ['globals', 'categories', 'datetime']
 CATEGORIES = get_categories()
 DATES = get_dates()
 
@@ -75,6 +75,7 @@ def print_options(options: list) -> list:
         except ValueError:
             errors[1].append(a)
             continue
+
         valids.append(a)
 
     print(separator)
@@ -87,13 +88,32 @@ def print_options(options: list) -> list:
     sleep(SLEEPING)
 
     print(separator)
-    return valids
+    result = []
+    for v in valids:
+        if v not in result:
+            result.append(v)
+    return result
 
 
-# Interface report
+# Report interfece
+def report(process: int = 0):
+    """
+    reports logic
+    """
+    if process == 0:
+        print('- Globals -\n')
+        globals()
+    elif process == 1:
+        print('- Categories -\n')
+    elif process == 2:
+        print('- Datetime -\n')
+    else:
+        print('- Unknown -\n')
+
+
 def interface():
     """
-    Prints manual report
+    Prints report options
     """
     separator = '++++++++++\n'
     print(separator)
@@ -101,10 +121,10 @@ def interface():
     response = print_options(PROCESSES)
     for r in response:
         print(separator)
-        if r == 0:
+        if r in range(3):
             print(f'INFO: Running "{PROCESSES[r]}" process\n')
             sleep(SLEEPING)
-            #ask_cats()
+            report(r)
         else:
             print(
                 f'ERROR: Sorry, process [{r}] - "{PROCESSES[r]}" - not yet available\n')
@@ -115,6 +135,96 @@ def interface():
 #################
 #   Reports     #
 #################
+
+
+# Globals
+def globals():
+    print('This is a global report\n')
+    separator = '-------------------\n'
+    print(separator)
+    revenue()
+    print(separator)
+    months()
+    print(separator)
+    most_sold()
+    print(separator)
+    least_sold()
+    print(separator)
+    most_searched()
+    print(separator)
+    least_searched()
+    high_stock()
+    print(separator)
+    low_stock()
+    print(separator)
+    best_reviewed()
+    print(separator)
+    worst_reviewed()
+    print(separator)
+    most_refunds()
+
+
+# Total revenue
+def revenue():
+    print('This is a total revenue report')
+
+
+# Monthly revenue
+def months():
+    print('This is a monthly total revenue report')
+
+
+# Most sold
+def most_sold():
+    print('Most sold items report')
+
+
+# Least sold
+def least_sold():
+    print('Least sold items report')
+
+
+# Most searched
+def most_searched():
+    print('Most searched items report')
+
+
+# Least searched
+def least_searched():
+    print('Least searched items report')
+
+
+# Most stock
+def high_stock():
+    print('High stock items report')
+
+
+# Lowest stock
+def low_stock():
+    print('Low stock items report')
+
+
+# Best reviewed
+def best_reviewed():
+    print('Best reviewed items report')
+
+
+# Worst reviewed
+def worst_reviewed():
+    print('Worst reviewed items report')
+
+
+# Most refunds
+def most_refunds():
+    print('Most refunds items report')
+
+
+# By Category
+
+# By Date
+
+#################
+
 
 def ask_cats():
     """
