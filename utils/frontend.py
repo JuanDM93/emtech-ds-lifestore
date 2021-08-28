@@ -7,11 +7,19 @@ from .backend import *
 
 
 # LOCALS
-SLEEPING = 0.2
+SLEEPING = 1
 SECRETS = ['admin', 'pass']
 PROCESSES = ['globals', 'categories', 'datetime']
+EXIT_CMDS = ['return', 'logout', 'exit']
 CATEGORIES = get_categories()
 DATES = get_dates()
+
+
+def clear():
+    """
+    Clears screen
+    """
+    os.system('clear')
 
 
 # Login
@@ -34,8 +42,9 @@ def login(limit: int = 3) -> bool:
             print(f'Login failed... : {limit}\n')
         else:
             print('Login succesful!\n')
-            os.system('clear')
-            return True
+            clear()
+            interface()
+            break
 
         if limit == 0:
             print('... bye')
@@ -43,6 +52,22 @@ def login(limit: int = 3) -> bool:
 
 
 # Option printer
+def exit_status(answer: list) -> bool:
+    answer = answer[0]
+    if answer == 'exit':
+        exit()
+    else:
+        if answer == 'logout':
+            clear()
+            login()
+            return True
+        if answer == 'return':
+            clear()
+            interface()
+            return True
+        return False
+
+
 def print_options(options: list) -> list:
     """
     options: ids list
@@ -50,17 +75,23 @@ def print_options(options: list) -> list:
     """
     separator = '**********\n'
     print(separator)
-    print('Select option by indices : 1,5,6,...\n')
+    print('Select option by indices:\n')
 
     size = len(options)
     options = [(i, options[i]) for i in range(size)]
     for o in options:
         print(f'{o[0]}: {o[-1]}')
+    for e in EXIT_CMDS:
+        print(f'"{e}"": {e}')
+
     answer = input('answer: ')
 
     valids = []
     errors = [[], []]
     answer = answer.split(',')
+    if len(answer) == 1:
+        if exit_status(answer):
+            return answer
     for a in answer:
         try:
             a = int(a)
@@ -68,19 +99,19 @@ def print_options(options: list) -> list:
                 errors[0].append(a)
                 continue
         except ValueError:
-            errors[1].append(a)
+            if a not in EXIT_CMDS:
+                errors[1].append(a)
             continue
-
         valids.append(a)
 
-    print(separator)
-    for e in errors[1]:
-        print(f'ERROR: Wrong input "{e}"\n')
-    sleep(SLEEPING)
+        print(separator)
+        for e in errors[1]:
+            print(f'ERROR: Wrong input "{e}"\n')
+        sleep(SLEEPING)
 
-    for w in errors[0]:
-        print(f'WARNING: "{w}"" is not a valid option\n')
-    sleep(SLEEPING)
+        for w in errors[0]:
+            print(f'WARNING: "{w}"" is not a valid option\n')
+        sleep(SLEEPING)
 
     print(separator)
     result = []
@@ -91,41 +122,54 @@ def print_options(options: list) -> list:
 
 
 # Report interfece
-def report(process: int = 0):
-    """
-    reports logic
-    """
-    if process == 0:
-        print('- Globals -\n')
-        globals()
-    elif process == 1:
-        print('- Categories -\n')
-        ask_cats()
-    elif process == 2:
-        print('- Datetime -\n')
-    else:
-        print('- Unknown -\n')
-
-
 def interface():
     """
     Prints report options
     """
-    separator = '++++++++++\n'
-    print(separator)
-    print('Hi, what would you like to do?\n')
-    response = print_options(PROCESSES)
-    for r in response:
+    while True:
+        separator = '++++++++++\n'
         print(separator)
-        if r in range(3):
-            print(f'INFO: Running "{PROCESSES[r]}" process\n')
+        print('Hey, what would you like to do?\n')
+        response = print_options(PROCESSES)
+        while len(response) > 1:
             sleep(SLEEPING)
-            report(r)
+            clear()
+            response = [PROCESSES[r] for r in response]
+            response = print_options(response)
+
+        print(separator)
+        if len(response) > 0:
+            if exit_status(response[0]):
+                break
+            if response[0] > len(PROCESSES):
+                print(
+                    f'ERROR: Sorry, process [{response}] - "{PROCESSES[response]}" - not yet available\n')
+                sleep(SLEEPING)
+            else:
+                print(f'INFO: Running "{PROCESSES[response]}" process\n')
+                sleep(SLEEPING)
+                report(response)
         else:
-            print(
-                f'ERROR: Sorry, process [{r}] - "{PROCESSES[r]}" - not yet available\n')
+            print(f'WARNING: No valid option selected\n')
             sleep(SLEEPING)
         print(separator)
+        clear()
+
+
+def report(process_id: int = 0):
+    """
+    reports logic
+    """
+    if process_id == 0:
+        print('- Globals -\n')
+        globals()
+    elif process_id == 1:
+        print('- Categories -\n')
+        ask_cats()
+    elif process_id == 2:
+        print('- Datetime -\n')
+    else:
+        print('- Unknown -\n')
 
 
 #################
@@ -158,61 +202,64 @@ def globals():
     worst_reviewed()
     print(separator)
     most_refunds()
+    # Return
+    input('Input anything to return')
+    clear()
 
 
 # Total revenue
 def revenue():
-    print('This is a total revenue report')
+    print('This is a total revenue report\n')
 
 
 # Monthly revenue
 def months():
-    print('This is a monthly total revenue report')
+    print('This is a monthly total revenue report\n')
 
 
 # Most sold
 def most_sold():
-    print('Most sold items report')
+    print('Most sold items report\n')
 
 
 # Least sold
 def least_sold():
-    print('Least sold items report')
+    print('Least sold items report\n')
 
 
 # Most searched
 def most_searched():
-    print('Most searched items report')
+    print('Most searched items report\n')
 
 
 # Least searched
 def least_searched():
-    print('Least searched items report')
+    print('Least searched items report\n')
 
 
 # Most stock
 def high_stock():
-    print('High stock items report')
+    print('High stock items report\n')
 
 
 # Lowest stock
 def low_stock():
-    print('Low stock items report')
+    print('Low stock items report\n')
 
 
 # Best reviewed
 def best_reviewed():
-    print('Best reviewed items report')
+    print('Best reviewed items report\n')
 
 
 # Worst reviewed
 def worst_reviewed():
-    print('Worst reviewed items report')
+    print('Worst reviewed items report\n')
 
 
 # Most refunds
 def most_refunds():
-    print('Most refunds items report')
+    print('Most refunds items report\n')
 
 
 # By Category
@@ -220,7 +267,8 @@ def ask_cats():
     """
     Validates categories input and prints report per category
     """
-    response = print_options(CATEGORIES)
+    options = CATEGORIES[:]
+    response = print_options(options)
     for r in response:
         c = CATEGORIES[r]
         cat_report(c)
