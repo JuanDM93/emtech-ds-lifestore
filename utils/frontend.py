@@ -9,8 +9,8 @@ from .backend import *
 # LOCALS
 SLEEPING = 1
 SECRETS = ['admin', 'pass']
-PROCESSES = ['globals', 'categories', 'datetime']
 EXIT_CMDS = ['return', 'logout', 'exit']
+PROCESSES = ['globals', 'categories', 'datetime']
 CATEGORIES = get_categories()
 DATES = get_dates()
 
@@ -25,7 +25,7 @@ def clear():
 # Login
 def login(limit: int = 3) -> bool:
     """
-    auth function
+    auth starter function
     """
     def ask() -> tuple:
         """
@@ -33,10 +33,10 @@ def login(limit: int = 3) -> bool:
         """
         admin = input('Input admin user: ')
         secret = input('Password: ')
-        return admin, secret
+        return (admin, secret)
 
     while True:
-        admin, secret = ask()
+        (admin, secret) = ask()
         if admin != SECRETS[0] or secret != SECRETS[1]:
             limit -= 1
             print(f'Login failed... : {limit}\n')
@@ -44,8 +44,10 @@ def login(limit: int = 3) -> bool:
             print('Login succesful!\n')
             sleep(SLEEPING)
             clear()
+            # Start interface service
             interface()
 
+        # Failed logout
         if limit == 0:
             print('... bye')
             return False
@@ -61,12 +63,15 @@ def interface():
         print(separator)
         print('Hey, what would you like to do?\n')
         response = print_options(PROCESSES)
+
+        # Ask main option
         while len(response) > 1:
             sleep(SLEEPING)
             clear()
             response = [PROCESSES[r] for r in response]
             response = print_options(response)
 
+        # Process case selector
         print(separator)
         if len(response) > 0:
             if response[0] > len(PROCESSES):
@@ -84,7 +89,6 @@ def interface():
         clear()
 
 
-# Check exit commands
 def exit_status(answer: list) -> bool:
     """
     Checks exit command behaviour
@@ -100,11 +104,9 @@ def exit_status(answer: list) -> bool:
         if answer == EXIT_CMDS[0]:
             clear()
             interface()
-            return True
         return False
 
 
-# Option printer
 def print_options(options: list) -> list:
     """
     options: ids list
@@ -158,6 +160,11 @@ def print_options(options: list) -> list:
     return result
 
 
+#################
+#   Reports     #
+#################
+
+
 def report(process_id: int = 0):
     """
     reports logic
@@ -172,11 +179,6 @@ def report(process_id: int = 0):
         print('- Datetime -\n')
     else:
         print('- Unknown -\n')
-
-
-#################
-#   Reports     #
-#################
 
 
 # Globals
