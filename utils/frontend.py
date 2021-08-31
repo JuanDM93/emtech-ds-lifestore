@@ -74,7 +74,8 @@ def interface():
         # Process case selector
         print(separator)
         if len(response) > 0:
-            if response[0] > len(PROCESSES):
+            response = response[0]
+            if response > len(PROCESSES):
                 print(
                     f'ERROR: Sorry, process [{response}] - "{PROCESSES[response]}" - not yet available\n')
                 sleep(SLEEPING)
@@ -171,7 +172,7 @@ def report(process_id: int = 0):
     """
     if process_id == 0:
         print('- Globals -\n')
-        globals()
+        ask_globals()
     elif process_id == 1:
         print('- Categories -\n')
         ask_cats()
@@ -182,7 +183,7 @@ def report(process_id: int = 0):
 
 
 # Globals
-def globals():
+def ask_globals():
     print('This is a global report\n')
     separator = '-------------------\n'
     print(separator)
