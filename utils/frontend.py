@@ -170,16 +170,24 @@ def report(process_id: int = 0):
     """
     reports logic
     """
+    def wait_input():
+        # Return
+        input('Input anything to return\n')
+        clear()
     if process_id == 0:
         print('- Globals -\n')
         ask_globals()
+        wait_input()
     elif process_id == 1:
         print('- Categories -\n')
         ask_cats()
+        wait_input()
     elif process_id == 2:
         print('- Datetime -\n')
+        wait_input()
     else:
         print('- Unknown -\n')
+        wait_input()
 
 
 # Globals
@@ -207,9 +215,6 @@ def ask_globals():
     worst_reviewed()
     print(separator)
     most_refunds()
-    # Return
-    input('Input anything to return')
-    clear()
 
 
 # Total revenue
