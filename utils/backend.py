@@ -129,7 +129,7 @@ def get_refunds(data: list) -> list:
     for d in data:
         sum = 0
         for s in d[1]:
-            sum += get_sale(s)[-1]
+            sum += get_sale(s)[-1]      
         result.append([d[0], sum])
     return result
 
@@ -170,7 +170,7 @@ def custom_sort(data: list, reverse: bool = True) -> list:
     returns: sorted custom list
     """
     result = data[:]
-    if type(result[0][-1]) is int:
+    if type(result[0][-1]) is not list:
         result.sort(key=lambda p: p[-1], reverse=reverse)
     else:
         result.sort(key=lambda p: len(p[-1]), reverse=reverse)

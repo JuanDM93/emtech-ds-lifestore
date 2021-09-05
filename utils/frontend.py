@@ -10,9 +10,10 @@ from .backend import *
 SLEEPING = 1
 SECRETS = ['admin', 'pass']
 EXIT_CMDS = ['return', 'logout', 'exit']
-PROCESSES = ['globals', 'categories', 'datetime']
+PROCESSES = ['globals',]
 CATEGORIES = get_categories()
 DATES = get_dates()
+SALES = global_sales()
 
 
 def clear():
@@ -178,13 +179,6 @@ def report(process_id: int = 0):
         print('- Globals -\n')
         ask_globals()
         wait_input()
-    elif process_id == 1:
-        print('- Categories -\n')
-        ask_cats()
-        wait_input()
-    elif process_id == 2:
-        print('- Datetime -\n')
-        wait_input()
     else:
         print('- Unknown -\n')
         wait_input()
@@ -195,225 +189,113 @@ def ask_globals():
     print('This is a global report\n')
     separator = '-------------------\n'
     print(separator)
-    revenue()
+    print_sales()
     print(separator)
-    months()
+    print_searches()
     print(separator)
-    most_sold()
+    print_reviews()
     print(separator)
-    least_sold()
+    print_stocks()
     print(separator)
-    most_searched()
+    print_refunds()
     print(separator)
-    least_searched()
-    high_stock()
-    print(separator)
-    low_stock()
-    print(separator)
-    best_reviewed()
-    print(separator)
-    worst_reviewed()
-    print(separator)
-    most_refunds()
+    print_revenue()
 
 
-# Total revenue
-def revenue():
-    print('This is a total revenue report\n')
+# Sales
+def print_sales():    
+    print('Total most sold items\n')
+    most = custom_sort(SALES)[:10]
+    for s in most:
+        product = get_product(s[0])
+        print(f'Sales: {len(s[1])} - {product[3]} - {product[1]}')
+    
+    print('\nLeast sold items per cat')
+    for c in CATEGORIES:
+        c_sale = filter_categories(SALES, [c])
+        c_sale = custom_sort(c_sale, False)[:10]
+        print(f'\n- Cat: {c}\n')
+        for s in c_sale:
+            product = get_product(s[0])
+            print(f'Sales: {len(s[1])} - {product[1]}')
 
 
-# Monthly revenue
-def months():
-    print('This is a monthly total revenue report\n')
-
-
-# Most sold
-def most_sold():
-    print('Most sold items report\n')
-
-
-# Least sold
-def least_sold():
-    print('Least sold items report\n')
-
-
-# Most searched
-def most_searched():
-    print('Most searched items report\n')
-
-
-# Least searched
-def least_searched():
-    print('Least searched items report\n')
-
-
-# Most stock
-def high_stock():
-    print('High stock items report\n')
-
-
-# Lowest stock
-def low_stock():
-    print('Low stock items report\n')
-
-
-# Best reviewed
-def best_reviewed():
-    print('Best reviewed items report\n')
-
-
-# Worst reviewed
-def worst_reviewed():
-    print('Worst reviewed items report\n')
-
-
-# Most refunds
-def most_refunds():
-    print('Most refunds items report\n')
-
-
-# By Category
-def ask_cats():
-    """
-    Validates categories input and prints report per category
-    """
-    options = CATEGORIES[:]
-    response = print_options(options)
-    for r in response:
-        c = CATEGORIES[r]
-        cat_report(c)
-
-
-def cat_report(cat: str):
-    """
-    Prints category report (TESTING)
-    """
-    separator = '-------------------\n'
-    print(separator)
-    print(f'"{cat} Report" ->\n')
-    test(cat)
-    print(separator)
-
-
-# By Date
-
-#################
-
-
-# TESTING
-def test(c: str):
-    """
-    Prints report (TESTING)
-    """
-    separator = '----------\n'
-    cats = [c]
-
-    # Searches
-    print(separator)
-    print('searches:\n')
+# Searches
+def print_searches():
     searches = global_searches()
-    cats_searched = filter_categories(searches, cats)
+    
+    print('Most searched items\n')
+    most = custom_sort(searches)[:10]
+    for s in most:
+        product = get_product(s[0])
+        print(f'Searches: {len(s[1])} - {product[3]} - {product[1]}')
 
-    if len(cats_searched) > 0:
-        most_searched = custom_sort(cats_searched)[:10]
-        print('* most_searched:')
-        print(most_searched)
-        print()
+    print('\nLeast searched items per cat')
+    for c in CATEGORIES:
+        c_search = filter_categories(searches, [c])
+        c_search = custom_sort(c_search, False)[:10]
+        print(f'\n- Cat: {c}\n')
+        for s in c_search:
+            product = get_product(s[0])
+            print(f'Searches: {len(s[1])} - {product[1]}')
 
-        least_searched = custom_sort(cats_searched, False)[:10]
-        print('* least_searched:')
-        print(least_searched)
-        print()
 
-    # Sales
-    print(separator)
-    print('sales:\n')
-    sales = global_sales()
-    cats_sold = filter_categories(sales, cats)
+# Reviews
+def print_reviews():
+    reviews = get_reviews(SALES)
+    
+    result = []
+    for r in reviews:
+        if len(r[1]) > 0:
+            review = sum(r[1]) / len(r[1])
+            result.append([r[0], review])
+    
+    print('Best reviewed items\n')
+    best = custom_sort(result)[:10]
+    for r in best:
+        product = get_product(r[0])
+        print(f'Review: {r[1]:.2f} - {product[3]} - {product[1]}')
 
-    if len(cats_sold) > 0:
-        total_most_sold = custom_sort(cats_sold)[:10]
-        print('* total_most_sold:')
-        print(total_most_sold)
-        print()
+    print('\nWorst reviewed items\n')
+    worst = custom_sort(result, False)[:10]
+    for r in worst:
+        product = get_product(r[0])
+        print(f'Review: {r[1]:.2f} - {product[3]} - {product[1]}')
 
-        total_least_sold = custom_sort(cats_sold, False)[:10]
-        print('* total_least_sold:')
-        print(total_least_sold)
-        print()
 
-        print('* historic:')
-        for m in range(1, 13):
-            month = f'{m:02d}'
-            print(f'- - monthly_sales_{month}:')
-            monthly_sold = filter_dates(cats_sold, months=[month])
+# Stocks
+def print_stocks():
+    stocks = get_stocks(SALES)
 
-            if len(monthly_sold) > 0:
-                most_sold = custom_sort(monthly_sold)
-                print(most_sold)
-                print()
+    print('High stock items\n')
+    h_stocks = custom_sort(stocks)[:10]
+    for s in h_stocks:
+        product = get_product(s[0])
+        print(f'Stock: {s[1]} - {product[3]} - {product[1]}')
 
-    # Reviews
-    print(separator)
-    print('reviews:\n')
-    reviews = get_reviews(sales)
-    cats_reviewed = filter_categories(reviews, cats)
-    if len(cats_reviewed) > 0:
-        most_reviewed = custom_sort(cats_reviewed)
-        print('* most_reviewed:')
-        print(most_reviewed)
-        print()
+    print('\nLow stock items\n')
+    l_stocks = custom_sort(stocks, False)[:10]
+    for s in l_stocks:
+        product = get_product(s[0])
+        print(f'Stock: {s[1]} - {product[3]} - {product[1]}')
 
-        least_reviewed = custom_sort(cats_reviewed, False)
-        print('* least_reviewed:')
-        print(least_reviewed)
-        print()
 
-    # Stocks
-    print(separator)
-    print('stocks:\n')
-    stocks = get_stocks(sales)
-    cats_stocked = filter_categories(stocks, cats)
-    if len(cats_stocked) > 0:
-        most_stock = custom_sort(cats_stocked)
-        print('* most_stock:')
-        print(most_stock)
-        print()
+# Refunds
+def print_refunds():
+    print('Most refunds items\n')
+    refunds = get_refunds(SALES)
 
-        lowest_stock = custom_sort(cats_stocked, False)
-        print('* lowest_stock:')
-        print(lowest_stock)
-        print()
+    refunds = custom_sort(refunds)[:10]
+    for r in refunds:
+        product = get_product(r[0])
+        print(f'Refunds: {r[1]} - {product[3]} - {product[1]}')
 
-    # Refunds
-    print(separator)
-    print('refunds:\n')
-    refunds = get_refunds(sales)
-    cats_refunds = filter_categories(refunds, cats)
-    if len(cats_refunds) > 0:
-        most_refund = custom_sort(cats_refunds)
-        print('* most_refund:')
-        print(most_refund)
-        print()
 
-        least_refund = custom_sort(cats_refunds, False)
-        print('* least_refund:')
-        print(least_refund)
-        print()
-
-    # Revenue
-    print(separator)
-    print('revenue:\n')
-    revenues = get_revenue(sales)
-    cats_revenue = filter_categories(revenues, cats)
-    if len(cats_revenue) > 0:
-        most_revenue = custom_sort(cats_revenue)
-        print('* most_revenue:')
-        print(most_revenue)
-        print()
-
-        least_revenue = custom_sort(cats_revenue, False)
-        print('* least_revenue:')
-        print(least_revenue)
-        print()
-####
+# Revenue
+def print_revenue():
+    print('Most revenue per item\n')
+    revenue = get_revenue(SALES)
+    revenue = custom_sort(revenue)[:10]
+    for r in revenue:
+        product = get_product(r[0])
+        print(f'Revenue: ${r[1]:10.2f} - {product[3]} - {product[1]}')
