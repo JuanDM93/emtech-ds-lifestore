@@ -131,7 +131,7 @@ def get_refunds(data: list) -> list:
         for s in d[1]:
             sum += get_sale(s)[-1]      
         result.append([d[0], sum])
-    return result
+    return clean_list(result)
 
 
 def get_revenue(data: list) -> list:
@@ -158,9 +158,9 @@ def clean_list(data: list, reverse: bool = True) -> list:
     count: True -> remove [], False -> remove 0s
     returns: clean list
     """
-    if reverse:
+    if type(data[0][1]) is list:
         return [d for d in data if len(d[1]) > 0]
-    return [d for d in data if len(d[1]) == 0]
+    return [d for d in data if d[1] > 0]
 
 
 def custom_sort(data: list, reverse: bool = True) -> list:
