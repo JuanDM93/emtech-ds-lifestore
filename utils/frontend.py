@@ -63,14 +63,14 @@ def interface():
     Prints report options
     """
     while True:
-        separator = '++++++++++\n'
+        separator = '++++++++++'
         print(separator)
-        print('Hey, what would you like to do?\n')
+        print('\nHey, what would you like to do?\n')
         response = print_options(PROCESSES)
 
         # Process
         print(separator)
-        print(f'INFO: Running "{PROCESSES[response]}" process\n')
+        print(f'\nINFO: Running "{PROCESSES[response]}" process\n')
         sleep(SLEEPING)
         report(response)
         clear()
@@ -81,9 +81,9 @@ def print_options(options: list) -> int:
     options: ids list
     returns: response id
     """
-    separator = '**********\n'
+    separator = '**********'
     print(separator)
-    print('Select option:\n')
+    print('\nSelect option:\n')
 
     size = len(options)
     options = [(i, options[i]) for i in range(size)]
@@ -100,9 +100,9 @@ def print_options(options: list) -> int:
     try:
         answer = int(answer)
         if answer < 0 or answer > size - 1:
-            print(f'WARNING: "{answer}" is not a valid option\n')
+            print(f'\nWARNING: "{answer}" is not a valid option\n')
     except ValueError:
-        print(f'ERROR: Unknown input "{answer}"\n')
+        print(f'\nERROR: Input unavailable "{answer}"\n')
         answer = -1
 
     print(separator)
@@ -144,19 +144,19 @@ def report(process_id: int = 0):
         clear()
 
     if process_id == 0:
-        print('- Globals -\n')
+        print('\n- Globals -\n')
         ask_globals()
         wait_input()
     elif process_id == 1:
-        print('- Categories -\n')
+        print('\n- Categories -\n')
         ask_cats()
         wait_input()
     elif process_id == 2:
-        print('- Dates -\n')
+        print('\n- Dates -\n')
         ask_dates()
         wait_input()
     else:
-        print('- Unknown -\n')
+        print('\n- Unknown -\n')
         wait_input()
 
 
@@ -165,54 +165,60 @@ def ask_dates():
     """
     Prints date related data
     """
-    separator = '-------------------\n'
+    def print_date(dates):
+        """
+        Single report printer
+        """
+        separator = '-------------------'
+        response = print_options(dates)
+        while response < 0 or response > len(dates):
+            clear()
+            response = print_options(dates)
+        print(f'\nThis is a {dates[response]} date report\n')
+        print(separator)
+        print_dates(dates[response])
+
     options = ['month', 'year']
     response = print_options(options)
     while response < 0 or response > len(options):
         clear()
         response = print_options(options)
 
-    months, years = [], []
-    for d in DATES:
-        m, y = d[-1][1], d[-1][-1]
-        if m not in months:
-            months.append(m)
-        if y not in years:
-            years.append(y)
-    months.sort()
-
     if response == 0:
-        response = print_options(months)
-        while response < 0 or response > len(months):
-            clear()
-            response = print_options(months)
-        print('This is a month report\n')
-        print(separator)
-        print_month(months[response])
+        months = []
+        for d in DATES:
+            m = d[-1][1]
+            if m not in months:
+                months.append(m)
+        months.sort()
+        print_date(months)
     elif response == 1:
-        response = print_options(years)
-        while response < 0 or response > len(years):
-            clear()
-            response = print_options(years)
-        print('This is a year report\n')
-        print(separator)
-        print_year(years[response])
+        years = []
+        for d in DATES:
+            y = d[-1][-1]
+            if y not in years:
+                years.append(y)
+        years.sort(reverse=True)
+        print_date(years)
 
 
-def print_month(month):
+def print_dates(date: str):
     """
     Prints data by month
     """
-    result = get_monthly(SALES, month)
-    print_sales(result)
+    if len(date) == 2:
+        result = get_monthly(SALES, date)
+    elif len(date) == 4:
+        result = get_yearly(SALES, date)
+    else:
+        result = []
 
-
-def print_year(year):
-    """
-    Prints data by year
-    """
-    result = get_yearly(SALES, year)
-    print_sales(result)
+    if len(result) > 0:
+        print_sales(result)
+        print_reviews(result)
+        print_refunds(result)
+        print_revenue(result)
+        print_total_revenue(result)
 
 
 # Globals
@@ -220,7 +226,7 @@ def ask_globals():
     """
     Prints global related data
     """
-    separator = '-------------------\n'
+    separator = '-------------------'
     options = [
         'sales', 'searches', 'reviews',
         'stock', 'refunds', 'revenue',
@@ -230,20 +236,21 @@ def ask_globals():
         clear()
         response = print_options(options)
 
-    print('This is a global report\n')
+    print('\nThis is a global report\n')
     print(separator)
     if response == 0:
         print_sales(SALES)
     elif response == 1:
         print_searches()
     elif response == 2:
-        print_reviews()
+        print_reviews(SALES)
     elif response == 3:
         print_stocks()
     elif response == 4:
-        print_refunds()
+        print_refunds(SALES)
     elif response == 5:
-        print_revenue()
+        print_revenue(SALES)
+        print_total_revenue(SALES)
 
 
 # Cats
@@ -251,7 +258,7 @@ def ask_cats():
     """
     Prints categorie filtered data
     """
-    separator = '-------------------\n'
+    separator = '-------------------'
 
     cat = print_options(CATEGORIES)
     while cat < 0 or cat > len(CATEGORIES):
@@ -268,6 +275,8 @@ def ask_cats():
     print_cat_reviews(CATEGORIES[cat])
     print(separator)
     print_cat_stocks(CATEGORIES[cat])
+    print(separator)
+    print_revenue(CATEGORIES[cat])
 
 
 # Sales
@@ -282,8 +291,8 @@ def print_sales(sales: list):
         product = get_product(s[0])
         print(f'Sales: {len(s[1])} - {product[3]} - {product[1]}')
 
-    print(f'{PRINT_SIZE} most sold items\n')
-    most = custom_sort(sales)[:PRINT_SIZE]
+    print(f'\n{PRINT_SIZE} most sold items\n')
+    most = clean_list(custom_sort(sales))[:PRINT_SIZE]
     for s in most:
         print_sale(s)
 
@@ -306,7 +315,7 @@ def print_cat_sales(sales, categorie):
 
     c_sale = filter_categories(sales, [categorie])
 
-    print(f'Most sold {categorie}\n')
+    print(f'\nMost sold {categorie}\n')
     c_most_sale = clean_list(custom_sort(c_sale))
     for s in c_most_sale:
         print_cat_sale(s)
@@ -331,8 +340,8 @@ def print_searches():
 
     searches = global_searches()
 
-    print(f'{PRINT_SIZE} most searched items\n')
-    most = custom_sort(searches)[:PRINT_SIZE]
+    print(f'\n{PRINT_SIZE} most searched items\n')
+    most = clean_list(custom_sort(searches))[:PRINT_SIZE]
     for s in most:
         print_search(s)
 
@@ -356,7 +365,7 @@ def print_cat_searches(categorie):
     searches = global_searches()
     c_search = filter_categories(searches, [categorie])
 
-    print(f'Most searched {categorie}\n')
+    print(f'\nMost searched {categorie}\n')
     c_most_search = clean_list(custom_sort(c_search))
     for s in c_most_search:
         print_cat_search(s)
@@ -368,7 +377,7 @@ def print_cat_searches(categorie):
 
 
 # Reviews
-def print_reviews():
+def print_reviews(data: list):
     """
     Prints reviews data
     """
@@ -379,16 +388,17 @@ def print_reviews():
         product = get_product(r[0])
         print(f'Review: {r[1]:.2f} - {product[3]} - {product[1]}')
 
-    reviews = get_reviews(SALES)
+    reviews = get_reviews(data)
 
     result = []
     for r in reviews:
+        review = 0
         if len(r[1]) > 0:
             review = sum(r[1]) / len(r[1])
-            result.append([r[0], review])
+        result.append([r[0], review])
 
-    print(f'Best {PRINT_SIZE} reviewed items\n')
-    best = custom_sort(result)[:PRINT_SIZE]
+    print(f'\nBest {PRINT_SIZE} reviewed items\n')
+    best = clean_list(custom_sort(result))[:PRINT_SIZE]
     for r in best:
         print_review(r)
 
@@ -419,7 +429,7 @@ def print_cat_reviews(categorie):
 
     c_review = filter_categories(result, [categorie])
 
-    print(f'Best reviewed {categorie}\n')
+    print(f'\nBest reviewed {categorie}\n')
     c_best_review = clean_list(custom_sort(c_review))
     for r in c_best_review:
         print_cat_review(r)
@@ -444,8 +454,8 @@ def print_stocks():
 
     stocks = get_stocks(SALES)
 
-    print(f'{PRINT_SIZE} high stock items\n')
-    h_stocks = custom_sort(stocks)[:PRINT_SIZE]
+    print(f'\n{PRINT_SIZE} high stock items\n')
+    h_stocks = clean_list(custom_sort(stocks))[:PRINT_SIZE]
     for s in h_stocks:
         print_stock(s)
 
@@ -481,26 +491,34 @@ def print_cat_stocks(categorie):
 
 
 # Revenue
-def print_revenue():
+def print_revenue(data: list):
     """
-    Prints revenue per item data
+    Prints revenue per item in data list
     """
-    print(f'{PRINT_SIZE} most revenue per item\n')
-    revenue = clean_list(get_revenue(SALES))
-    revenue = custom_sort(revenue)[:PRINT_SIZE]
+    print(f'\n{PRINT_SIZE} most revenue per item\n')
+    revenue = get_revenue(data)
+    revenue = clean_list(custom_sort(revenue))[:PRINT_SIZE]
     for r in revenue:
         product = get_product(r[0])
         print(f'Revenue: ${r[1]:10.2f} - {product[3]} - {product[1]}')
 
 
+def print_total_revenue(data: list):
+    """
+    Prints total revenue for data list
+    """
+    revenue = get_total_revenue(data)
+    print(f'\nTotal revenue: ${revenue:10.2f}\n')
+
+
 # Refunds
-def print_refunds():
+def print_refunds(data: list):
     """
     Prints refund items data
     """
-    print(f'{PRINT_SIZE} most refund items\n')
-    refunds = get_refunds(SALES)
-    refunds = custom_sort(refunds)[:PRINT_SIZE]
+    print(f'\n{PRINT_SIZE} most refund items\n')
+    refunds = get_refunds(data)
+    refunds = clean_list(custom_sort(refunds))[:PRINT_SIZE]
     for r in refunds:
         product = get_product(r[0])
         print(f'Refunds: {r[1]} - {product[3]} - {product[1]}')

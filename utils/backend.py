@@ -165,7 +165,7 @@ def get_refunds(data: list) -> list:
         for s in d[1]:
             sum += get_sale(s)[-1]
         result.append([d[0], sum])
-    return clean_list(result)
+    return result
 
 
 def get_revenue(data: list) -> list:
@@ -183,6 +183,18 @@ def get_revenue(data: list) -> list:
                 total += product[2]
         revenue.append([d[0], total])
     return revenue
+
+
+def get_total_revenue(data: list) -> float:
+    """
+    data: any list with product_id at [0] and revenue at [1]
+    returns: total revenue for data
+    """
+    revenue = get_revenue(data)
+    total = 0
+    for r in revenue:
+        total += r[1]
+    return float(total)
 
 
 # Filters
