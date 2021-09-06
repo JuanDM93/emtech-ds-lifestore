@@ -2,7 +2,6 @@
 Backend module
 """
 # Datasets
-from os import EX_TEMPFAIL
 from .lifestore_file import lifestore_searches, lifestore_sales, lifestore_products
 
 
@@ -56,27 +55,49 @@ def global_searches() -> list:
     return total_searches
 
 
-def get_monthly(month: str = '02') -> list:
+# Custom Getters
+def get_dates(data: list = lifestore_sales) -> list:
+    """
+    data: any list with sales_id at [0]
+    returns: dates list from input
+    """
+    return [[d[0], get_date(d[0])] for d in data]
+
+
+def get_monthly(data: list, month: str = '02') -> list:
     """
     data: any list with sales_ids at [0]
     dates: '01', ..., '12'
     returns: list of product sales filtered by month
     """
-    dates = get_dates()
-    return [get_sale(s[0]) for s in dates if s[-1][1] == month] 
+    result = []
+    for p in data:
+        sales = []
+        for s in p[1]:
+            date = get_date(s)
+            if date[1] == month:
+                sales.append(s)
+        result.append([p[0], sales])
+    return result
 
 
-def get_yearly(year: str = '2020') -> list:
+def get_yearly(data: list, year: str = '2020') -> list:
     """
-    data: any list with sales_ids at [0]
-    dates: '2001', ..., '2030'
+    data: any list with sales_ids at [1]
+    year: '2001', ..., '2030'
     returns: list of product sales filtered by year
     """
-    dates = get_dates()
-    return [get_sale(s[0]) for s in dates if s[-1][-1] == year]
+    result = []
+    for p in data:
+        sales = []
+        for s in p[1]:
+            date = get_date(s)
+            if date[-1] == year:
+                sales.append(s)
+        result.append([p[0], sales])
+    return result
 
 
-# Custom Getters
 def get_categories(data: list = lifestore_products) -> list:
     """
     data: any list with product_id at [0]
@@ -88,14 +109,6 @@ def get_categories(data: list = lifestore_products) -> list:
         if cat not in categories:
             categories.append(cat)
     return categories
-
-
-def get_dates(data: list = lifestore_sales) -> list:
-    """
-    data: any list with sales_id at [0]
-    returns: dates list from input
-    """
-    return [[d[0], get_date(d[0])] for d in data]
 
 
 def get_products(data: list) -> list:

@@ -57,7 +57,7 @@ def login(limit: int = 3) -> bool:
             return False
 
 
-# Main Interfece
+# Main Interface
 def interface():
     """
     Prints report options
@@ -203,14 +203,16 @@ def print_month(month):
     """
     Prints data by month
     """
-    results = get_monthly(month)
+    result = get_monthly(SALES, month)
+    print_sales(result)
 
 
 def print_year(year):
     """
     Prints data by year
     """
-    results = get_yearly(year)
+    result = get_yearly(SALES, year)
+    print_sales(result)
 
 
 # Globals
