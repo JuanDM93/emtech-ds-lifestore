@@ -7,7 +7,7 @@ from .backend import *
 
 
 # LOCALS
-SLEEPING = 1
+SLEEPING = 0.5
 PRINT_SIZE = 10
 SECRETS = ['admin', 'pass']
 
@@ -153,11 +153,64 @@ def report(process_id: int = 0):
         wait_input()
     elif process_id == 2:
         print('- Dates -\n')
-        # ask_date()
+        ask_dates()
         wait_input()
     else:
         print('- Unknown -\n')
         wait_input()
+
+
+# Date
+def ask_dates():
+    """
+    Prints date related data
+    """
+    separator = '-------------------\n'
+    options = ['month', 'year']
+    response = print_options(options)
+    while response < 0 or response > len(options):
+        clear()
+        response = print_options(options)
+
+    months, years = [], []
+    for d in DATES:
+        m, y = d[-1][1], d[-1][-1]
+        if m not in months:
+            months.append(m)
+        if y not in years:
+            years.append(y)
+    months.sort()
+
+    if response == 0:
+        response = print_options(months)
+        while response < 0 or response > len(months):
+            clear()
+            response = print_options(months)
+        print('This is a month report\n')
+        print(separator)
+        print_month(months[response])
+    elif response == 1:
+        response = print_options(years)
+        while response < 0 or response > len(years):
+            clear()
+            response = print_options(years)
+        print('This is a year report\n')
+        print(separator)
+        print_year(years[response])
+
+
+def print_month(month):
+    """
+    Prints data by month
+    """
+    results = get_monthly(month)
+
+
+def print_year(year):
+    """
+    Prints data by year
+    """
+    results = get_yearly(year)
 
 
 # Globals
@@ -178,16 +231,16 @@ def ask_globals():
     print('This is a global report\n')
     print(separator)
     if response == 0:
-        print_sales()
+        print_sales(SALES)
     elif response == 1:
         print_searches()
     elif response == 2:
         print_reviews()
     elif response == 3:
         print_stocks()
-    elif response == 3:
-        print_refunds()
     elif response == 4:
+        print_refunds()
+    elif response == 5:
         print_revenue()
 
 
@@ -206,7 +259,7 @@ def ask_cats():
     # Cat report
     print('This is a categorie report\n')
     print(separator)
-    print_cat_sales(CATEGORIES[cat])
+    print_cat_sales(SALES, CATEGORIES[cat])
     print(separator)
     print_cat_searches(CATEGORIES[cat])
     print(separator)
@@ -216,7 +269,7 @@ def ask_cats():
 
 
 # Sales
-def print_sales():
+def print_sales(sales: list):
     """
     Prints sales data
     """
@@ -228,17 +281,17 @@ def print_sales():
         print(f'Sales: {len(s[1])} - {product[3]} - {product[1]}')
 
     print(f'{PRINT_SIZE} most sold items\n')
-    most = custom_sort(SALES)[:PRINT_SIZE]
+    most = custom_sort(sales)[:PRINT_SIZE]
     for s in most:
         print_sale(s)
 
     print(f'\n{PRINT_SIZE} least sold items\n')
-    least = custom_sort(SALES, False)[:PRINT_SIZE]
+    least = custom_sort(sales, False)[:PRINT_SIZE]
     for s in least:
         print_sale(s)
 
 
-def print_cat_sales(categorie):
+def print_cat_sales(sales, categorie):
     """
     Prints sales data by categorie
     """
@@ -249,7 +302,7 @@ def print_cat_sales(categorie):
         product = get_product(s[0])
         print(f'Sales: {len(s[1])} - {product[1]}')
 
-    c_sale = filter_categories(SALES, [categorie])
+    c_sale = filter_categories(sales, [categorie])
 
     print(f'Most sold {categorie}\n')
     c_most_sale = clean_list(custom_sort(c_sale))

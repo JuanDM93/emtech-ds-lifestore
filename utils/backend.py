@@ -2,6 +2,7 @@
 Backend module
 """
 # Datasets
+from os import EX_TEMPFAIL
 from .lifestore_file import lifestore_searches, lifestore_sales, lifestore_products
 
 
@@ -53,6 +54,26 @@ def global_searches() -> list:
     for search in lifestore_searches:
         total_searches[search[1] - 1][1].append(search[0])
     return total_searches
+
+
+def get_monthly(month: str = '02') -> list:
+    """
+    data: any list with sales_ids at [0]
+    dates: '01', ..., '12'
+    returns: list of product sales filtered by month
+    """
+    dates = get_dates()
+    return [get_sale(s[0]) for s in dates if s[-1][1] == month] 
+
+
+def get_yearly(year: str = '2020') -> list:
+    """
+    data: any list with sales_ids at [0]
+    dates: '2001', ..., '2030'
+    returns: list of product sales filtered by year
+    """
+    dates = get_dates()
+    return [get_sale(s[0]) for s in dates if s[-1][-1] == year]
 
 
 # Custom Getters
@@ -184,30 +205,3 @@ def filter_categories(data: list, cats: list) -> list:
     returns: list of products filtered by cats
     """
     return [d for d in data if get_categorie(d[0]) in cats]
-
-
-def filter_date(data: list, dates: list = ['2020']) -> list:
-    """
-    data: list to filter with dates at [-1]
-    years: dates list filter
-    returns: filtered list by dates
-    """
-    return [[d[0], d[-1][:-1]] for d in data if d[-1][-1] in dates]
-
-
-def filter_dates(
-    data: list, months: list, years: list = ['2020'],  # days: list,
-) -> list:
-    """
-    data: any list with sales_ids at [0]
-    dates: ['01', ..., '12'] ['2001', ..., '2030']
-    returns: list of product sales filtered by date
-    """
-    dates = get_dates(data)
-    dates = filter_date(dates, years)
-    dates = filter_date(dates, months)
-    #dates = filter_date(data, days)
-
-    if len(dates) == 0:
-        return dates
-    return [d for d in data if d[0] in dates[0]]
