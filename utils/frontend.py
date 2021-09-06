@@ -66,21 +66,17 @@ def interface():
         separator = '++++++++++\n'
         print(separator)
         print('Hey, what would you like to do?\n')
-
         response = print_options(PROCESSES)
-        # Process case selector
+
+        # Process
         print(separator)
-        if response > len(PROCESSES):
-            print(f'WARNING: No valid option selected\n')
-            sleep(SLEEPING)
-        else:
-            print(f'INFO: Running "{PROCESSES[response]}" process\n')
-            sleep(SLEEPING)
-            report(response)
+        print(f'INFO: Running "{PROCESSES[response]}" process\n')
+        sleep(SLEEPING)
+        report(response)
         clear()
 
 
-def print_options(options: list):
+def print_options(options: list) -> int:
     """
     options: ids list
     returns: response id
@@ -97,7 +93,7 @@ def print_options(options: list):
     for e in EXIT_CMDS:
         print(f'"{e}"')
 
-    answer = input('answer: ')
+    answer = input('\nanswer: ')
     if exit_status(answer):
         return len(options) + 1
     print(separator)
@@ -141,7 +137,9 @@ def report(process_id: int = 0):
     reports logic
     """
     def wait_input():
-        # Return
+        """
+        Return
+        """
         input('\nInput anything to return\n')
         clear()
 
@@ -167,18 +165,17 @@ def ask_globals():
     """
     Prints global related data
     """
-    print('This is a global report\n')
     separator = '-------------------\n'
     options = [
         'sales', 'searches', 'reviews',
         'stock', 'refunds', 'revenue',
     ]
-
     response = print_options(options)
     while response < 0 or response > len(options):
         clear()
         response = print_options(options)
 
+    print('This is a global report\n')
     print(separator)
     if response == 0:
         print_sales()
@@ -199,15 +196,15 @@ def ask_cats():
     """
     Prints categorie filtered data
     """
-    print('This is a categorie report\n')
     separator = '-------------------\n'
 
     cat = print_options(CATEGORIES)
     while cat < 0 or cat > len(CATEGORIES):
         clear()
-        response = print_options(CATEGORIES)
+        cat = print_options(CATEGORIES)
 
     # Cat report
+    print('This is a categorie report\n')
     print(separator)
     print_cat_sales(CATEGORIES[cat])
     print(separator)
@@ -255,7 +252,7 @@ def print_cat_sales(categorie):
     c_sale = filter_categories(SALES, [categorie])
 
     print(f'Most sold {categorie}\n')
-    c_most_sale = custom_sort(c_sale)
+    c_most_sale = clean_list(custom_sort(c_sale))
     for s in c_most_sale:
         print_cat_sale(s)
 
@@ -305,7 +302,7 @@ def print_cat_searches(categorie):
     c_search = filter_categories(searches, [categorie])
 
     print(f'Most searched {categorie}\n')
-    c_most_search = custom_sort(c_search)
+    c_most_search = clean_list(custom_sort(c_search))
     for s in c_most_search:
         print_cat_search(s)
 
@@ -368,7 +365,7 @@ def print_cat_reviews(categorie):
     c_review = filter_categories(result, [categorie])
 
     print(f'Best reviewed {categorie}\n')
-    c_best_review = custom_sort(c_review)
+    c_best_review = clean_list(custom_sort(c_review))
     for r in c_best_review:
         print_cat_review(r)
 
@@ -418,7 +415,7 @@ def print_cat_stocks(categorie):
     c_stock = filter_categories(stocks, [categorie])
 
     print(f'High stock {categorie}\n')
-    c_high_stock = custom_sort(c_stock)
+    c_high_stock = clean_list(custom_sort(c_stock))
     for s in c_high_stock:
         print_cat_stock(s)
 
@@ -434,7 +431,7 @@ def print_revenue():
     Prints revenue per item data
     """
     print(f'{PRINT_SIZE} most revenue per item\n')
-    revenue = get_revenue(SALES)
+    revenue = clean_list(get_revenue(SALES))
     revenue = custom_sort(revenue)[:PRINT_SIZE]
     for r in revenue:
         product = get_product(r[0])
