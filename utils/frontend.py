@@ -67,31 +67,57 @@ def interface():
         print(separator)
         print('Hey, what would you like to do?\n')
 
-        response = ask_option(PROCESSES)
+        response = print_options(PROCESSES)
         # Process case selector
         print(separator)
-        if len(response) > 0:
-            response = response[0]
-            if response > len(PROCESSES):
-                print(
-                    f'ERROR: Sorry, process [{response}] - "{PROCESSES[response]}" - not yet available\n')
-                sleep(SLEEPING)
-            else:
-                print(f'INFO: Running "{PROCESSES[response]}" process\n')
-                sleep(SLEEPING)
-                report(response)
-        else:
+        if response > len(PROCESSES):
             print(f'WARNING: No valid option selected\n')
             sleep(SLEEPING)
-        print(separator)
+        else:
+            print(f'INFO: Running "{PROCESSES[response]}" process\n')
+            sleep(SLEEPING)
+            report(response)
         clear()
 
 
-def exit_status(answer: list) -> bool:
+def print_options(options: list):
+    """
+    options: ids list
+    returns: response id
+    """
+    separator = '**********\n'
+    print(separator)
+    print('Select option:\n')
+
+    size = len(options)
+    options = [(i, options[i]) for i in range(size)]
+    for o in options:
+        print(f'{o[0]}: {o[-1]}')
+    print()
+    for e in EXIT_CMDS:
+        print(f'"{e}"')
+
+    answer = input('answer: ')
+    if exit_status(answer):
+        return len(options) + 1
+    print(separator)
+    try:
+        answer = int(answer)
+        if answer < 0 or answer > size - 1:
+            print(f'WARNING: "{answer}" is not a valid option\n')
+    except ValueError:
+        print(f'ERROR: Unknown input "{answer}"\n')
+        answer = -1
+
+    print(separator)
+    sleep(SLEEPING)
+    return answer
+
+
+def exit_status(answer: str) -> bool:
     """
     Checks exit command behaviour
     """
-    answer = answer[0]
     if answer == EXIT_CMDS[-1]:
         exit()
     else:
@@ -103,71 +129,6 @@ def exit_status(answer: list) -> bool:
             clear()
             interface()
         return False
-
-
-def ask_option(options: list) -> list:
-    """
-    Asks unique option value
-    """
-    response = print_options(options)
-    while len(response) > 1:
-        sleep(SLEEPING)
-        clear()
-        response = [options[r] for r in response]
-        response = print_options(response)
-    return response
-
-
-def print_options(options: list) -> list:
-    """
-    options: ids list
-    returns: response ids list
-    """
-    separator = '**********\n'
-    print(separator)
-    print('Select option by indices:\n')
-
-    size = len(options)
-    options = [(i, options[i]) for i in range(size)]
-    for o in options:
-        print(f'{o[0]}: {o[-1]}')
-    for e in EXIT_CMDS:
-        print(f'"{e}"": {e}')
-
-    answer = input('answer: ')
-
-    valids = []
-    errors = [[], []]
-    answer = answer.split(',')
-    if len(answer) == 1:
-        if exit_status(answer):
-            return answer
-    for a in answer:
-        try:
-            a = int(a)
-            if a < 0 or a > size - 1:
-                errors[0].append(a)
-                continue
-        except ValueError:
-            if a not in EXIT_CMDS:
-                errors[1].append(a)
-            continue
-        valids.append(a)
-
-        print(separator)
-        for e in errors[1]:
-            print(f'ERROR: Wrong input "{e}"\n')
-
-        for w in errors[0]:
-            print(f'WARNING: "{w}"" is not a valid option\n')
-        sleep(SLEEPING)
-
-    print(separator)
-    result = []
-    for v in valids:
-        if v not in result:
-            result.append(v)
-    return result
 
 
 #################
@@ -183,6 +144,7 @@ def report(process_id: int = 0):
         # Return
         input('\nInput anything to return\n')
         clear()
+
     if process_id == 0:
         print('- Globals -\n')
         ask_globals()
@@ -212,7 +174,11 @@ def ask_globals():
         'stock', 'refunds', 'revenue',
     ]
 
-    response = print_options(options)[0]
+    response = print_options(options)
+    while response < 0 or response > len(options):
+        clear()
+        response = print_options(options)
+
     print(separator)
     if response == 0:
         print_sales()
@@ -235,7 +201,11 @@ def ask_cats():
     """
     print('This is a categorie report\n')
     separator = '-------------------\n'
-    cat = print_options(CATEGORIES)[0]
+
+    cat = print_options(CATEGORIES)
+    while cat < 0 or cat > len(CATEGORIES):
+        clear()
+        response = print_options(CATEGORIES)
 
     # Cat report
     print(separator)
@@ -308,7 +278,7 @@ def print_searches():
         print(f'Searches: {len(s[1])} - {product[3]} - {product[1]}')
 
     searches = global_searches()
-    
+
     print(f'{PRINT_SIZE} most searched items\n')
     most = custom_sort(searches)[:PRINT_SIZE]
     for s in most:

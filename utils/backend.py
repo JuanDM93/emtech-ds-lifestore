@@ -129,7 +129,7 @@ def get_refunds(data: list) -> list:
     for d in data:
         sum = 0
         for s in d[1]:
-            sum += get_sale(s)[-1]      
+            sum += get_sale(s)[-1]
         result.append([d[0], sum])
     return clean_list(result)
 

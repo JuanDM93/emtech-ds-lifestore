@@ -25,7 +25,7 @@ python PROYECTO-01-DOMINGUEZ-JUAN.py
 
 ## More info
 
-Check out the PDF file on this repo for more details
+Check out the files on docs/ for more details
 
 ## Contributing
 
