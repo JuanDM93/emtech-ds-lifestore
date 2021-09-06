@@ -154,6 +154,19 @@ def get_reviews(data: list) -> list:
     return result
 
 
+def sum_reviews(reviews) -> list:
+    """
+    Averages review values
+    """
+    result = []
+    for r in reviews:
+        review = 0
+        if len(r[1]) > 0:
+            review = sum(r[1]) / len(r[1])
+        result.append([r[0], review])
+    return result
+
+
 def get_refunds(data: list) -> list:
     """
     data: any list with product_id at [0] with sales_ids at [1]

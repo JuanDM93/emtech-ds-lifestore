@@ -266,7 +266,7 @@ def ask_cats():
         cat = print_options(CATEGORIES)
 
     # Cat report
-    print('This is a categorie report\n')
+    print(f'\nThis is a categorie report: {CATEGORIES[cat]}\n')
     print(separator)
     print_cat_sales(SALES, CATEGORIES[cat])
     print(separator)
@@ -275,8 +275,6 @@ def ask_cats():
     print_cat_reviews(CATEGORIES[cat])
     print(separator)
     print_cat_stocks(CATEGORIES[cat])
-    print(separator)
-    print_revenue(CATEGORIES[cat])
 
 
 # Sales
@@ -314,6 +312,9 @@ def print_cat_sales(sales, categorie):
         print(f'Sales: {len(s[1])} - {product[1]}')
 
     c_sale = filter_categories(sales, [categorie])
+
+    print_total_revenue(c_sale)
+    print_revenue(c_sale)
 
     print(f'\nMost sold {categorie}\n')
     c_most_sale = clean_list(custom_sort(c_sale))
@@ -389,13 +390,7 @@ def print_reviews(data: list):
         print(f'Review: {r[1]:.2f} - {product[3]} - {product[1]}')
 
     reviews = get_reviews(data)
-
-    result = []
-    for r in reviews:
-        review = 0
-        if len(r[1]) > 0:
-            review = sum(r[1]) / len(r[1])
-        result.append([r[0], review])
+    result = sum_reviews(reviews)
 
     print(f'\nBest {PRINT_SIZE} reviewed items\n')
     best = clean_list(custom_sort(result))[:PRINT_SIZE]
@@ -403,7 +398,7 @@ def print_reviews(data: list):
         print_review(r)
 
     print(f'\nWorst {PRINT_SIZE} reviewed items\n')
-    worst = custom_sort(result, False)[:PRINT_SIZE]
+    worst = clean_list(custom_sort(result, False))[:PRINT_SIZE]
     for r in worst:
         print_review(r)
 
@@ -420,12 +415,7 @@ def print_cat_reviews(categorie):
         print(f'Review: {r[1]:.2f} - {product[1]}')
 
     reviews = get_reviews(SALES)
-
-    result = []
-    for r in reviews:
-        if len(r[1]) > 0:
-            review = sum(r[1]) / len(r[1])
-            result.append([r[0], review])
+    result = sum_reviews(reviews)
 
     c_review = filter_categories(result, [categorie])
 
@@ -435,7 +425,7 @@ def print_cat_reviews(categorie):
         print_cat_review(r)
 
     print(f'\nWorst reviewed {categorie}\n')
-    c_worst_review = custom_sort(c_review, False)
+    c_worst_review = clean_list(custom_sort(c_review, False))
     for r in c_worst_review:
         print_cat_review(r)
 
@@ -479,7 +469,7 @@ def print_cat_stocks(categorie):
     stocks = get_stocks(SALES)
     c_stock = filter_categories(stocks, [categorie])
 
-    print(f'High stock {categorie}\n')
+    print(f'\nHigh stock {categorie}\n')
     c_high_stock = clean_list(custom_sort(c_stock))
     for s in c_high_stock:
         print_cat_stock(s)
