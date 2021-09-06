@@ -3,7 +3,12 @@ Frontend module
 """
 import os
 from time import sleep
-from .backend import *
+from .backend import                                    \
+    clean_list, custom_sort, filter_categories,         \
+    get_yearly, global_searches, sum_reviews,           \
+    get_reviews, get_stocks, get_total_revenue,         \
+    get_monthly, get_product, get_refunds, get_revenue, \
+    SALES, DATES, CATEGORIES
 
 
 # LOCALS
@@ -13,10 +18,6 @@ SECRETS = ['admin', 'pass']
 
 PROCESSES = ['globals', 'cats', 'date']
 EXIT_CMDS = ['return', 'logout', 'exit']
-CATEGORIES = get_categories()
-DATES = get_dates()
-
-SALES = global_sales()
 
 
 def clear():

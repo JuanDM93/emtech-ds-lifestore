@@ -5,6 +5,30 @@ Backend module
 from .lifestore_file import lifestore_searches, lifestore_sales, lifestore_products
 
 
+# Global Getters
+def global_sales() -> list:
+    """
+    returns: total sales list by product -> [p_id, [sales, ...]]
+    """
+    total_sales = [[p[0], []] for p in lifestore_products]
+    for sale in lifestore_sales:
+        total_sales[sale[1] - 1][1].append(sale[0])
+    return total_sales
+
+
+SALES = global_sales()
+
+
+def global_searches() -> list:
+    """
+    returns: total search list by product -> [p_id, [searches, ...]]
+    """
+    total_searches = [[p[0], []] for p in lifestore_products]
+    for search in lifestore_searches:
+        total_searches[search[1] - 1][1].append(search[0])
+    return total_searches
+
+
 # Single Getters
 def get_product(id: int) -> list:
     """
@@ -34,34 +58,32 @@ def get_date(sale_id: str) -> list:
     return lifestore_sales[sale_id - 1][3].split('/')
 
 
-# Global Getters
-def global_sales() -> list:
-    """
-    returns: total sales list by product -> [p_id, [sales, ...]]
-    """
-    total_sales = [[p[0], []] for p in lifestore_products]
-    for sale in lifestore_sales:
-        total_sales[sale[1] - 1][1].append(sale[0])
-    return total_sales
-
-
-def global_searches() -> list:
-    """
-    returns: total search list by product -> [p_id, [searches, ...]]
-    """
-    total_searches = [[p[0], []] for p in lifestore_products]
-    for search in lifestore_searches:
-        total_searches[search[1] - 1][1].append(search[0])
-    return total_searches
-
-
 # Custom Getters
+def get_categories(data: list = lifestore_products) -> list:
+    """
+    data: any list with product_id at [0]
+    returns: categories list from input
+    """
+    categories = []
+    for d in data:
+        cat = get_categorie(d[0])
+        if cat not in categories:
+            categories.append(cat)
+    return categories
+
+
+CATEGORIES = get_categories()
+
+
 def get_dates(data: list = lifestore_sales) -> list:
     """
     data: any list with sales_id at [0]
     returns: dates list from input
     """
     return [[d[0], get_date(d[0])] for d in data]
+
+
+DATES = get_dates()
 
 
 def get_monthly(data: list, month: str = '02') -> list:
@@ -96,19 +118,6 @@ def get_yearly(data: list, year: str = '2020') -> list:
                 sales.append(s)
         result.append([p[0], sales])
     return result
-
-
-def get_categories(data: list = lifestore_products) -> list:
-    """
-    data: any list with product_id at [0]
-    returns: categories list from input
-    """
-    categories = []
-    for d in data:
-        cat = get_categorie(d[0])
-        if cat not in categories:
-            categories.append(cat)
-    return categories
 
 
 def get_products(data: list) -> list:
