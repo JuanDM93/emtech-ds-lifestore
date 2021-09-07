@@ -20,6 +20,10 @@ PROCESSES = ['globals', 'cats', 'date']
 EXIT_CMDS = ['return', 'logout', 'exit']
 
 
+#################
+#   Interface   #
+#################
+
 def clear():
     """
     Clears screen
@@ -58,7 +62,7 @@ def login(limit: int = 3) -> bool:
             return False
 
 
-# Main Interface
+# Main
 def interface():
     """
     Prints report options
@@ -129,7 +133,7 @@ def exit_status(answer: str) -> bool:
 
 
 #################
-#   Reports     #
+#    Reports    #
 #################
 
 
@@ -161,7 +165,7 @@ def report(process_id: int = 0):
         wait_input()
 
 
-# Date
+# Dates
 def ask_dates():
     """
     Prints date related data
@@ -215,11 +219,28 @@ def print_dates(date: str):
         result = []
 
     if len(result) > 0:
+        print_total_revenue(result)
+        print_revenue(result)
         print_sales(result)
         print_reviews(result)
         print_refunds(result)
-        print_revenue(result)
+        print_date_cat(result)
+
+
+def print_date_cat(data: list):
+    """
+    Prints date report per categorie
+    """
+    print('\n ** Categories ** \n')
+    result = []
+    for c in CATEGORIES:
+        result = clean_list(filter_categories(data, c))
+        print(f'\n --- {c} --- \n')
         print_total_revenue(result)
+        print_revenue(result)
+        print_cat_sales(result, c)
+        print_cat_reviews(result, c)
+        print_refunds(result)
 
 
 # Globals
@@ -241,17 +262,29 @@ def ask_globals():
     print(separator)
     if response == 0:
         print_sales(SALES)
+        for c in CATEGORIES:
+            print(f'\n----{c}----\n')
+            print_cat_sales(SALES, c)
     elif response == 1:
         print_searches()
+        for c in CATEGORIES:
+            print(f'\n----{c}----\n')
+            print_cat_searches(c)
     elif response == 2:
         print_reviews(SALES)
+        for c in CATEGORIES:
+            print(f'\n----{c}----\n')
+            print_cat_reviews(SALES, c)
     elif response == 3:
         print_stocks()
+        for c in CATEGORIES:
+            print(f'\n----{c}----\n')
+            print_cat_stocks(c)
     elif response == 4:
         print_refunds(SALES)
     elif response == 5:
-        print_revenue(SALES)
         print_total_revenue(SALES)
+        print_revenue(SALES)
 
 
 # Cats
@@ -273,7 +306,7 @@ def ask_cats():
     print(separator)
     print_cat_searches(CATEGORIES[cat])
     print(separator)
-    print_cat_reviews(CATEGORIES[cat])
+    print_cat_reviews(SALES, CATEGORIES[cat])
     print(separator)
     print_cat_stocks(CATEGORIES[cat])
 
@@ -312,7 +345,7 @@ def print_cat_sales(sales, categorie):
         product = get_product(s[0])
         print(f'Sales: {len(s[1])} - {product[1]}')
 
-    c_sale = filter_categories(sales, [categorie])
+    c_sale = filter_categories(sales, categorie)
 
     print_total_revenue(c_sale)
     print_revenue(c_sale)
@@ -365,7 +398,7 @@ def print_cat_searches(categorie):
         print(f'Searches: {len(s[1])} - {product[1]}')
 
     searches = global_searches()
-    c_search = filter_categories(searches, [categorie])
+    c_search = filter_categories(searches, categorie)
 
     print(f'\nMost searched {categorie}\n')
     c_most_search = clean_list(custom_sort(c_search))
@@ -404,7 +437,7 @@ def print_reviews(data: list):
         print_review(r)
 
 
-def print_cat_reviews(categorie):
+def print_cat_reviews(data: list, categorie: str):
     """
     Prints reviews data by categorie
     """
@@ -415,10 +448,10 @@ def print_cat_reviews(categorie):
         product = get_product(r[0])
         print(f'Review: {r[1]:.2f} - {product[1]}')
 
-    reviews = get_reviews(SALES)
+    reviews = get_reviews(data)
     result = sum_reviews(reviews)
 
-    c_review = filter_categories(result, [categorie])
+    c_review = filter_categories(result, categorie)
 
     print(f'\nBest reviewed {categorie}\n')
     c_best_review = clean_list(custom_sort(c_review))
@@ -468,7 +501,7 @@ def print_cat_stocks(categorie):
         print(f'Stock: {s[1]} - {product[1]}')
 
     stocks = get_stocks(SALES)
-    c_stock = filter_categories(stocks, [categorie])
+    c_stock = filter_categories(stocks, categorie)
 
     print(f'\nHigh stock {categorie}\n')
     c_high_stock = clean_list(custom_sort(c_stock))
@@ -507,9 +540,9 @@ def print_refunds(data: list):
     """
     Prints refund items data
     """
-    print(f'\n{PRINT_SIZE} most refund items\n')
+    print('\nMost refund items\n')
     refunds = get_refunds(data)
-    refunds = clean_list(custom_sort(refunds))[:PRINT_SIZE]
+    refunds = clean_list(custom_sort(refunds))
     for r in refunds:
         product = get_product(r[0])
         print(f'Refunds: {r[1]} - {product[3]} - {product[1]}')

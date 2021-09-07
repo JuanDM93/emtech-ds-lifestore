@@ -99,7 +99,8 @@ def get_monthly(data: list, month: str = '02') -> list:
             date = get_date(s)
             if date[1] == month:
                 sales.append(s)
-        result.append([p[0], sales])
+        if len(sales) > 0:
+            result.append([p[0], sales])
     return result
 
 
@@ -116,7 +117,8 @@ def get_yearly(data: list, year: str = '2020') -> list:
             date = get_date(s)
             if date[-1] == year:
                 sales.append(s)
-        result.append([p[0], sales])
+        if len(sales) > 0:
+            result.append([p[0], sales])
     return result
 
 
@@ -226,9 +228,11 @@ def clean_list(data: list, reverse: bool = True) -> list:
     count: True -> remove [], False -> remove 0s
     returns: clean list
     """
-    if type(data[0][1]) is list:
-        return [d for d in data if len(d[1]) > 0]
-    return [d for d in data if d[1] > 0]
+    if len(data) > 0:
+        if type(data[0][1]) is list:
+            return [d for d in data if len(d[1]) > 0]
+        return [d for d in data if d[1] > 0]
+    return data
 
 
 def custom_sort(data: list, reverse: bool = True) -> list:
@@ -237,18 +241,20 @@ def custom_sort(data: list, reverse: bool = True) -> list:
     reverse: ordering type, default -> most
     returns: sorted custom list
     """
-    result = data[:]
-    if type(result[0][-1]) is not list:
-        result.sort(key=lambda p: p[-1], reverse=reverse)
-    else:
-        result.sort(key=lambda p: len(p[-1]), reverse=reverse)
-    return result
+    if len(data) > 0:
+        result = data[:]
+        if type(result[0][-1]) is not list:
+            result.sort(key=lambda p: p[-1], reverse=reverse)
+        else:
+            result.sort(key=lambda p: len(p[-1]), reverse=reverse)
+        return result
+    return data
 
 
-def filter_categories(data: list, cats: list) -> list:
+def filter_categories(data: list, cat: str) -> list:
     """
     data: any list with product_id at [0]
-    cats: a custom categories list
+    cat: a custom categorie
     returns: list of products filtered by cats
     """
-    return [d for d in data if get_categorie(d[0]) in cats]
+    return [d for d in data if get_categorie(d[0]) == cat]
