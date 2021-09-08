@@ -29,6 +29,9 @@ def global_searches() -> list:
     return total_searches
 
 
+SEARCHES = global_searches()
+
+
 # Single Getters
 def get_product(id: int) -> list:
     """
@@ -165,9 +168,9 @@ def get_reviews(data: list) -> list:
     return result
 
 
-def sum_reviews(reviews) -> list:
+def sum_reviews(reviews: list) -> list:
     """
-    Averages review values
+    Averages review values at [1]
     """
     result = []
     for r in reviews:
