@@ -19,6 +19,12 @@ ADMINS = [['admin', 'pass'], ]
 PROCESSES = ['globals', 'cats', 'date']
 EXIT_CMDS = ['return', 'logout', 'exit']
 
+MONTHS = [
+    'JAN', 'FEB', 'MAR', 'APR',
+    'MAY', 'JUN', 'JUL', 'AUG',
+    'SEP', 'OCT', 'NOV', 'DEC',
+]
+
 
 #################
 #   Interface   #
@@ -254,7 +260,7 @@ def ask_globals():
     elif response == 5:
         print_total_revenue(SALES)
         print_revenue(SALES)
-        
+
         results = []
         for c in CATEGORIES:
             c_revenue = filter_categories(SALES, c)
@@ -316,10 +322,11 @@ def ask_dates():
     if response == 0:
         months = []
         for d in DATES:
-            m = d[-1][1]
+            m = int(d[-1][1]) - 1
             if m not in months:
                 months.append(m)
         months.sort()
+        months = [MONTHS[m] for m in months]
         print_date(months)
     elif response == 1:
         years = []
@@ -335,34 +342,37 @@ def print_dates(date: str):
     """
     Prints data by month
     """
-    if len(date) == 2:
-        result = get_monthly(SALES, date)
-    elif len(date) == 4:
+    if len(date) == 4:
         result = get_yearly(SALES, date)
+        if len(result) > 0:
+            print_total_revenue(result)
+            print_date_cat(result)
+            results = []
+            for i in range(len(MONTHS)):
+                m = MONTHS[i]
+                monthly = get_monthly(result, m)
+                results.append([m, [r[-1] for r in get_revenue(monthly)]])
+            print(' * Monthly revenue * \n')
+            for r in custom_sort(results):
+                print(f'--- {r[0]}: $ {sum(r[-1]):}---\n')
     else:
-        result = []
-
-    if len(result) > 0:
-        print_total_revenue(result)
-        print_revenue(result)
-        print_sales(result)
-        print_reviews(result)
-        print_refunds(result)
-        print_date_cat(result)
+        result = get_monthly(SALES, date)
+        if len(result) > 0:
+            print_total_revenue(result)
+            print_date_cat(result)
 
 
 def print_date_cat(data: list):
     """
     Prints date report per categorie
     """
-    print('\n ** Categories ** \n')
-    result = []
+    print('\n ** Categories revenue ** \n')
+    results = []
     for c in CATEGORIES:
-        result = clean_list(filter_categories(data, c))
-        print(f'\n --- {c} --- \n')
-        print_cat_sales(result, c)
-        print_cat_reviews(result, c)
-        print_refunds(result)
+        c_sales = filter_categories(data, c)
+        results.append([c, [s[-1] for s in get_revenue(c_sales)]])
+    for r in custom_sort(results):
+        print(f'--- $ {sum(r[-1]):10.2f}: {r[0]}---\n')
 
 
 # Sales

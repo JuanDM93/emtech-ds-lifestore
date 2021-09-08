@@ -89,18 +89,19 @@ def get_dates(data: list = lifestore_sales) -> list:
 DATES = get_dates()
 
 
-def get_monthly(data: list, month: str = '02') -> list:
+def get_monthly(data: list, month: str = 'SEP') -> list:
     """
     data: any list with sales_ids at [0]
-    dates: '01', ..., '12'
+    dates: 'JAN', ..., 'DEC'
     returns: list of product sales filtered by month
     """
+    from .frontend import MONTHS
     result = []
     for p in data:
         sales = []
         for s in p[1]:
-            date = get_date(s)
-            if date[1] == month:
+            date = int(get_date(s)[1])
+            if MONTHS[date - 1] == month:
                 sales.append(s)
         if len(sales) > 0:
             result.append([p[0], sales])
