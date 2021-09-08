@@ -181,6 +181,17 @@ def ask_globals():
     """
     Prints global related data
     """
+    def print_cat_global(data: list, process: str):
+        """
+        Prints ordered categories summary
+        """
+        print('\nThis is a categories summary\n')
+        for d in custom_sort(data):
+            if process == 'reviews':
+                print(f'\n--- {d[-1]:.2f} {d[0]} avg {process}---\n')
+            else:
+                print(f'\n--- {d[-1]} {d[0]} {process} ---\n')
+
     separator = '-------------------'
     options = [
         'sales', 'searches', 'reviews',
@@ -197,39 +208,43 @@ def ask_globals():
         print_total_revenue(SALES)
         print_sales(SALES)
 
-        print('\nThis is a categories summary\n')
+        results = []
         for c in CATEGORIES:
             c_sales = filter_categories(SALES, c)
             result = [len(s[-1]) for s in c_sales]
-            print(f'\n---{sum(result)} {c} sold---\n')
+            results.append([c, sum(result)])
+        print_cat_global(results, options[response])
 
     elif response == 1:
         print_searches()
 
-        print('\nThis is a categories summary\n')
+        results = []
         for c in CATEGORIES:
             c_search = filter_categories(SEARCHES, c)
             result = [len(s[-1]) for s in c_search]
-            print(f'\n---{sum(result)} {c} searched---\n')
+            results.append([c, sum(result)])
+        print_cat_global(results, options[response])
 
     elif response == 2:
         print_reviews(SALES)
 
-        print('\nThis is a categories summary\n')
+        results = []
         for c in CATEGORIES:
             c_reviews = filter_categories(SALES, c)
             result = sum_reviews(get_reviews(c_reviews))
             avg = [r[-1] for r in result if r[-1] > 0]
-            print(f'\n---{sum(avg) / len(avg):.2f}: {c} avg review---\n')
+            results.append([c, (sum(avg) / len(avg))])
+        print_cat_global(results, options[response])
 
     elif response == 3:
         print_stocks()
 
-        print('\nThis is a categories summary\n')
+        results = []
         for c in CATEGORIES:
             c_stocks = filter_categories(SALES, c)
             result = [r[-1] for r in get_stocks(c_stocks)]
-            print(f'\n---{c}: {sum(result)} total stock---\n')
+            results.append([c, sum(result)])
+        print_cat_global(results, options[response])
 
     elif response == 4:
         print_refunds(SALES)
@@ -262,7 +277,7 @@ def ask_cats():
     print(separator)
     print_cat_stocks(CATEGORIES[cat])
     print(separator)
-    print_refunds(filter_categories(SALES,CATEGORIES[cat] ))
+    print_refunds(filter_categories(SALES, CATEGORIES[cat]))
 
 
 # Dates
