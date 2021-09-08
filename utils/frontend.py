@@ -188,9 +188,11 @@ def ask_globals():
         print('\nThis is a categories summary\n')
         for d in custom_sort(data):
             if process == 'reviews':
-                print(f'\n--- {d[-1]:.2f} {d[0]} avg {process}---\n')
+                print(f'--- {d[-1]:.2f} {d[0]} avg {process}---\n')
+            elif process == 'revenue':
+                print(f'--- $ {d[-1]:10.2f} {d[0]} {process}---\n')
             else:
-                print(f'\n--- {d[-1]} {d[0]} {process} ---\n')
+                print(f'--- {d[-1]} {d[0]} {process} ---\n')
 
     separator = '-------------------'
     options = [
@@ -252,6 +254,13 @@ def ask_globals():
     elif response == 5:
         print_total_revenue(SALES)
         print_revenue(SALES)
+        
+        results = []
+        for c in CATEGORIES:
+            c_revenue = filter_categories(SALES, c)
+            result = [r[-1] for r in get_revenue(c_revenue)]
+            results.append([c, sum(result)])
+        print_cat_global(results, options[response])
 
 
 # Cats
@@ -554,7 +563,7 @@ def print_total_revenue(data: list):
     Prints total revenue for data list
     """
     revenue = get_total_revenue(data)
-    print(f'\nTotal revenue: ${revenue:10.2f}\n')
+    print(f'\nTotal revenue: ${revenue:10.2f}')
 
 
 # Refunds
