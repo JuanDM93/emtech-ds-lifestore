@@ -175,9 +175,7 @@ def sum_reviews(reviews: list) -> list:
     """
     result = []
     for r in reviews:
-        review = 0
-        if len(r[1]) > 0:
-            review = sum(r[1]) / len(r[1])
+        review = sum(r[1]) / len(r[1]) if len(r[1]) > 0 else 0
         result.append([r[0], review])
     return result
 
@@ -207,8 +205,7 @@ def get_revenue(data: list) -> list:
         total = 0
         for s in d[1]:
             refund = get_sale(s)[-1]
-            if refund == 0:
-                total += product[2]
+            total = total + product[2] if refund == 0 else total
         revenue.append([d[0], total])
     return revenue
 

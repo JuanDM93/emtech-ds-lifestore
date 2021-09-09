@@ -4,7 +4,7 @@ Frontend module
 import os
 from time import sleep
 from .backend import                                    \
-    clean_list, custom_sort, filter_categories,         \
+    clean_list, custom_sort, filter_categories, get_sales,         \
     get_yearly, sum_reviews, get_reviews, get_stocks,   \
     get_total_revenue, get_monthly, get_product,        \
     get_refunds, get_revenue,                           \
@@ -12,7 +12,7 @@ from .backend import                                    \
 
 
 # LOCALS
-SLEEPING = 0.5
+SLEEPING = 0.4
 PRINT_SIZE = 10
 ADMINS = [['admin', 'pass'], ]
 
@@ -74,6 +74,7 @@ def login(limit: int = 3):
 
     # Failed logout
     print('... bye')
+    exit()
 
 
 # Main
@@ -142,7 +143,6 @@ def exit_status(answer: str) -> bool:
         if answer == EXIT_CMDS[1]:
             clear()
             login()
-            return True
         if answer == EXIT_CMDS[0]:
             clear()
             interface()
@@ -174,7 +174,7 @@ def report(process_id: int = 0):
         ask_cats()
         wait_input()
     elif process_id == 2:
-        print('\n- Dates -\n')
+        print('\n- Years -\n')
         ask_dates()
         wait_input()
     else:
@@ -313,53 +313,37 @@ def ask_dates():
         print(separator)
         print_dates(dates[response])
 
-    options = ['month', 'year']
-    response = print_options(options)
-    while response < 0 or response > len(options):
-        clear()
-        response = print_options(options)
-
-    if response == 0:
-        months = []
-        for d in DATES:
-            m = int(d[-1][1]) - 1
-            if m not in months:
-                months.append(m)
-        months.sort()
-        months = [MONTHS[m] for m in months]
-        print_date(months)
-    elif response == 1:
-        years = []
-        for d in DATES:
-            y = d[-1][-1]
-            if y not in years:
-                years.append(y)
-        years.sort(reverse=True)
-        print_date(years)
+    years = []
+    for d in DATES:
+        y = d[-1][-1]
+        if y not in years:
+            years.append(y)
+    years.sort(reverse=True)
+    print_date(years)
 
 
-def print_dates(date: str):
+def print_dates(year: str):
     """
-    Prints data by month
+    Prints data by year
     """
-    if len(date) == 4:
-        result = get_yearly(SALES, date)
-        if len(result) > 0:
-            print_total_revenue(result)
-            print_date_cat(result)
-            results = []
-            for i in range(len(MONTHS)):
-                m = MONTHS[i]
-                monthly = get_monthly(result, m)
-                results.append([m, [r[-1] for r in get_revenue(monthly)]])
-            print(' * Monthly revenue * \n')
-            for r in custom_sort(results):
-                print(f'--- {r[0]}: $ {sum(r[-1]):}---\n')
-    else:
-        result = get_monthly(SALES, date)
-        if len(result) > 0:
-            print_total_revenue(result)
-            print_date_cat(result)
+    result = get_yearly(SALES, year)
+    if len(result) > 0:
+        print_total_revenue(result)
+        print_date_cat(result)
+
+        print(' * Monthly report * \n')
+        for i in range(len(MONTHS)):
+            m = MONTHS[i]
+            monthly = get_monthly(result, m)
+
+            revenue = [r[-1] for r in get_revenue(monthly)]
+            sales = len(revenue)
+
+            reviews = sum_reviews(get_reviews(monthly))
+            avg = [r[-1] for r in reviews if r[-1] > 0]
+            avg = sum(avg) / len(avg) if len(avg) > 0 else 0
+            print(
+                f'--- {m}: $ {sum(revenue):10.2f} - {sales} sales - {avg:.2f} review ---\n')
 
 
 def print_date_cat(data: list):
@@ -370,9 +354,10 @@ def print_date_cat(data: list):
     results = []
     for c in CATEGORIES:
         c_sales = filter_categories(data, c)
-        results.append([c, [s[-1] for s in get_revenue(c_sales)]])
+        c_rev = [(s[-1]) for s in get_revenue(c_sales)]
+        results.append([c, sum(c_rev)])
     for r in custom_sort(results):
-        print(f'--- $ {sum(r[-1]):10.2f}: {r[0]}---\n')
+        print(f'--- $ {r[-1]:10.2f}: {r[0]} ---\n')
 
 
 # Sales
