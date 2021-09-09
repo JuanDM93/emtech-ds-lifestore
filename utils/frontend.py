@@ -4,7 +4,7 @@ Frontend module
 import os
 from time import sleep
 from .backend import                                    \
-    clean_list, custom_sort, filter_categories, get_sales,         \
+    clean_list, custom_sort, filter_categories,         \
     get_yearly, sum_reviews, get_reviews, get_stocks,   \
     get_total_revenue, get_monthly, get_product,        \
     get_refunds, get_revenue,                           \
