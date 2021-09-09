@@ -89,6 +89,22 @@ def get_dates(data: list = lifestore_sales) -> list:
 DATES = get_dates()
 
 
+def get_years(data: list) -> list:
+    """
+    returns ordered year list from sales data
+    """
+    years = []
+    for d in data:
+        y = d[-1][-1]
+        if y not in years:
+            years.append(y)
+    years.sort(reverse=True)
+    return years
+
+
+YEARS = get_years(DATES)
+
+
 def get_monthly(data: list, month: str = 'SEP') -> list:
     """
     data: any list with sales_ids at [0]

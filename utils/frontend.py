@@ -3,12 +3,11 @@ Frontend module
 """
 import os
 from time import sleep
-from .backend import                                    \
-    clean_list, custom_sort, filter_categories,         \
-    get_yearly, sum_reviews, get_reviews, get_stocks,   \
-    get_total_revenue, get_monthly, get_product,        \
-    get_refunds, get_revenue,                           \
-    SALES, SEARCHES, DATES, CATEGORIES
+from .backend import                                        \
+    clean_list, custom_sort, filter_categories, get_yearly, \
+    sum_reviews, get_reviews, get_stocks, get_total_revenue,\
+    get_monthly, get_product, get_refunds, get_revenue,     \
+    SALES, SEARCHES, YEARS, CATEGORIES
 
 
 # LOCALS
@@ -106,6 +105,7 @@ def print_options(options: list) -> int:
     print(separator)
     print('\nSelect option:\n')
 
+    # Show options
     size = len(options)
     options = [(i, options[i]) for i in range(size)]
     for o in options:
@@ -114,10 +114,13 @@ def print_options(options: list) -> int:
     for e in EXIT_CMDS:
         print(f'"{e}"')
 
+    # Read input
     answer = input('\nanswer: ')
     if exit_status(answer):
         return len(options) + 1
     print(separator)
+
+    # Check answer
     try:
         answer = int(answer)
         if answer < 0 or answer > size - 1:
@@ -191,20 +194,21 @@ def ask_globals():
         """
         Prints ordered categories summary
         """
-        print('\nThis is a categories summary\n')
+        print(f'\nThis is a {process} categories summary\n')
         for d in custom_sort(data):
             if process == 'reviews':
-                print(f'--- {d[-1]:.2f} {d[0]} avg {process}---\n')
+                print(f'--- {d[-1]:.2f} {d[0]:18s} ---\n')
             elif process == 'revenue':
-                print(f'--- $ {d[-1]:10.2f} {d[0]} {process}---\n')
+                print(f'--- $ {d[-1]:10.2f} {d[0]:18s} ---\n')
             else:
-                print(f'--- {d[-1]} {d[0]} {process} ---\n')
+                print(f'--- {d[-1]:5d} {d[0]:18s} ---\n')
 
     separator = '-------------------'
     options = [
         'sales', 'searches', 'reviews',
         'stock', 'refunds', 'revenue',
     ]
+    # Options loop
     response = print_options(options)
     while response < 0 or response > len(options):
         clear()
@@ -276,6 +280,7 @@ def ask_cats():
     """
     separator = '-------------------'
 
+    # Options loop
     cat = print_options(CATEGORIES)
     while cat < 0 or cat > len(CATEGORIES):
         clear()
@@ -300,26 +305,17 @@ def ask_dates():
     """
     Prints date related data
     """
-    def print_date(dates):
-        """
-        Single report printer
-        """
-        separator = '-------------------'
-        response = print_options(dates)
-        while response < 0 or response > len(dates):
-            clear()
-            response = print_options(dates)
-        print(f'\nThis is a {dates[response]} date report\n')
-        print(separator)
-        print_dates(dates[response])
+    separator = '-------------------'
 
-    years = []
-    for d in DATES:
-        y = d[-1][-1]
-        if y not in years:
-            years.append(y)
-    years.sort(reverse=True)
-    print_date(years)
+    # Options loop
+    response = print_options(YEARS)
+    while response < 0 or response > len(YEARS):
+        clear()
+        response = print_options(YEARS)
+
+    print(f'\nThis is a {YEARS[response]} date report\n')
+    print(separator)
+    print_dates(YEARS[response])
 
 
 def print_dates(year: str):
@@ -343,21 +339,28 @@ def print_dates(year: str):
             avg = [r[-1] for r in reviews if r[-1] > 0]
             avg = sum(avg) / len(avg) if len(avg) > 0 else 0
             print(
-                f'--- {m}: $ {sum(revenue):10.2f} - {sales} sales - {avg:.2f} review ---\n')
+                f'--- {m}: ${sum(revenue):10.2f} - {sales:5d} sales - {avg:.2f} review ---\n')
 
 
 def print_date_cat(data: list):
     """
     Prints date report per categorie
     """
-    print('\n ** Categories revenue ** \n')
+    print('\n * Categories report * \n')
+
     results = []
     for c in CATEGORIES:
         c_sales = filter_categories(data, c)
-        c_rev = [(s[-1]) for s in get_revenue(c_sales)]
-        results.append([c, sum(c_rev)])
+
+        c_revenue = [s[-1] for s in get_revenue(c_sales)]
+        c_reviews = sum_reviews(get_reviews(c_sales))
+        avg = [r[-1] for r in c_reviews if r[-1] > 0]
+        avg = sum(avg) / len(avg) if len(avg) > 0 else 0
+        results.append([c, avg, c_revenue, sum(c_revenue)])
+
     for r in custom_sort(results):
-        print(f'--- $ {r[-1]:10.2f}: {r[0]} ---\n')
+        print(
+            f'--- {r[0]:18s}: ${r[-1]:10.2f} - {len(r[2]):5d} sales - {r[1]:.2f} review ---\n')
 
 
 # Sales
@@ -370,7 +373,7 @@ def print_sales(sales: list):
         Sale item print
         """
         product = get_product(s[0])
-        print(f'{len(s[1])} - {product[3]} - {product[1]}')
+        print(f'{len(s[1]):5d} - {product[3]:18s} - {product[1]}')
 
     print(f'\n{PRINT_SIZE} most sold items\n')
     most = clean_list(custom_sort(sales))[:PRINT_SIZE]
@@ -392,7 +395,7 @@ def print_cat_sales(sales, categorie):
         Cat sale item print
         """
         product = get_product(s[0])
-        print(f'{len(s[1])} - {product[1]}')
+        print(f'{len(s[1]):5d} - {product[1]}')
 
     c_sale = filter_categories(sales, categorie)
 
@@ -415,7 +418,7 @@ def print_searches():
         Search item print
         """
         product = get_product(s[0])
-        print(f'{len(s[1])} - {product[3]} - {product[1]}')
+        print(f'{len(s[1]):5d} - {product[3]:18s} - {product[1]}')
 
     print(f'\n{PRINT_SIZE} most searched items\n')
     most = clean_list(custom_sort(SEARCHES))[:PRINT_SIZE]
@@ -437,7 +440,7 @@ def print_cat_searches(categorie):
         Cat search item print
         """
         product = get_product(s[0])
-        print(f'{len(s[1])} - {product[1]}')
+        print(f'{len(s[1]):5d} - {product[1]}')
 
     c_search = filter_categories(SEARCHES, categorie)
 
@@ -457,7 +460,7 @@ def print_reviews(data: list):
         Review item print
         """
         product = get_product(r[0])
-        print(f'{r[1]:.2f} - {product[3]} - {product[1]}')
+        print(f'{r[1]:.2f} - {product[3]:18s} - {product[1]}')
 
     reviews = get_reviews(data)
     result = sum_reviews(reviews)
@@ -505,7 +508,7 @@ def print_stocks():
         Stock print
         """
         product = get_product(s[0])
-        print(f'{s[1]} - {product[3]} - {product[1]}')
+        print(f'{s[1]:5d} - {product[3]:18s} - {product[1]}')
 
     stocks = get_stocks(SALES)
 
@@ -529,7 +532,7 @@ def print_cat_stocks(categorie):
         Stock print
         """
         product = get_product(s[0])
-        print(f'{s[1]} - {product[1]}')
+        print(f'{s[1]:5d} - {product[1]}')
 
     stocks = get_stocks(SALES)
     c_stock = filter_categories(stocks, categorie)
@@ -550,7 +553,7 @@ def print_revenue(data: list):
     revenue = clean_list(custom_sort(revenue))[:PRINT_SIZE]
     for r in revenue:
         product = get_product(r[0])
-        print(f'${r[1]:10.2f} - {product[3]} - {product[1]}')
+        print(f'${r[1]:10.2f} - {product[3]:18s} - {product[1]}')
 
 
 def print_total_revenue(data: list):
@@ -571,4 +574,4 @@ def print_refunds(data: list):
     refunds = clean_list(custom_sort(refunds))
     for r in refunds:
         product = get_product(r[0])
-        print(f'{r[1]} - {product[3]} - {product[1]}')
+        print(f'{r[1]:4d} - {product[3]:18s} - {product[1]}')
