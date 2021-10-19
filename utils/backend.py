@@ -5,31 +5,24 @@ Backend module
 from .lifestore_file import lifestore_searches, lifestore_sales, lifestore_products
 
 
-# Global Getters
-def global_sales() -> list:
+def globals() -> list:
     """
-    returns: total sales list by product -> [p_id, [sales, ...]]
+    returns: totals list by product -> [p_id, [type, ...]]
     """
+    # Sales
     total_sales = [[p[0], []] for p in lifestore_products]
     for sale in lifestore_sales:
         total_sales[sale[1] - 1][1].append(sale[0])
-    return total_sales
 
-
-SALES = global_sales()
-
-
-def global_searches() -> list:
-    """
-    returns: total search list by product -> [p_id, [searches, ...]]
-    """
+    # Searches
     total_searches = [[p[0], []] for p in lifestore_products]
     for search in lifestore_searches:
         total_searches[search[1] - 1][1].append(search[0])
-    return total_searches
+
+    return total_sales, total_searches
 
 
-SEARCHES = global_searches()
+SALES, SEARCHES = globals()
 
 
 # Single Getters
@@ -91,7 +84,7 @@ DATES = get_dates()
 
 def get_years(data: list) -> list:
     """
-    returns ordered year list from sales data
+    returns: ordered year list from sales data
     """
     years = []
     for d in data:
@@ -239,10 +232,9 @@ def get_total_revenue(data: list) -> float:
 
 
 # Filters
-def clean_list(data: list, reverse: bool = True) -> list:
+def clean_list(data: list) -> list:
     """
     data: any list with id at [0] and to_clean_list at [-1]
-    count: True -> remove [], False -> remove 0s
     returns: clean list
     """
     if len(data) > 0:

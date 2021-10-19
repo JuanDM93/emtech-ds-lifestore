@@ -143,11 +143,10 @@ def exit_status(answer: str) -> bool:
     if answer == EXIT_CMDS[-1]:
         exit()
     else:
+        clear()
         if answer == EXIT_CMDS[1]:
-            clear()
             login()
         if answer == EXIT_CMDS[0]:
-            clear()
             interface()
         return False
 
@@ -216,6 +215,8 @@ def ask_globals():
 
     print('\nThis is a global report\n')
     print(separator)
+
+    # Sales
     if response == 0:
         print_total_revenue(SALES)
         print_sales(SALES)
@@ -227,6 +228,7 @@ def ask_globals():
             results.append([c, sum(result)])
         print_cat_global(results, options[response])
 
+    # Searches
     elif response == 1:
         print_searches()
 
@@ -237,6 +239,7 @@ def ask_globals():
             results.append([c, sum(result)])
         print_cat_global(results, options[response])
 
+    # Reviews
     elif response == 2:
         print_reviews(SALES)
 
@@ -248,6 +251,7 @@ def ask_globals():
             results.append([c, (sum(avg) / len(avg))])
         print_cat_global(results, options[response])
 
+    # Stocks
     elif response == 3:
         print_stocks()
 
@@ -258,9 +262,11 @@ def ask_globals():
             results.append([c, sum(result)])
         print_cat_global(results, options[response])
 
+    # Refunds
     elif response == 4:
         print_refunds(SALES)
 
+    # Revenue
     elif response == 5:
         print_total_revenue(SALES)
         print_revenue(SALES)

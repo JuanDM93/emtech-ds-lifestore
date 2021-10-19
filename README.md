@@ -1,6 +1,6 @@
-# EMTECH DS Project 1
+# EMTECH DS1 Project 1
 
-Project 1 : LifeStore Reports (Python)
+LifeStore Report (Python)
 
 ## Description
 
