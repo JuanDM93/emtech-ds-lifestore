@@ -3,17 +3,20 @@ Frontend module
 """
 import os
 from time import sleep
-from .backend import                                        \
-    clean_list, custom_sort, filter_categories, get_yearly, \
-    sum_reviews, get_reviews, get_stocks, get_total_revenue,\
-    get_monthly, get_product, get_refunds, get_revenue,     \
-    SALES, SEARCHES, YEARS, CATEGORIES
+from .backend import (
+    SALES, SEARCHES, YEARS, CATEGORIES,
+    clean_list, custom_sort, filter_categories, get_yearly,
+    sum_reviews, get_reviews, get_stocks, get_total_revenue,
+    get_monthly, get_product, get_refunds, get_revenue,
+)
 
 
 # LOCALS
 SLEEPING = 0.4
 PRINT_SIZE = 10
-ADMINS = [['admin', 'pass'], ]
+USERS = {
+    'admin': 'pass',
+}
 
 PROCESSES = ['globals', 'cats', 'date']
 EXIT_CMDS = ['return', 'logout', 'exit']
@@ -63,11 +66,10 @@ def login(limit: int = 3):
 
     while limit > 0:
         (user, password) = ask()
-        for admin in ADMINS:
-            if admin[0] == user and admin[-1] == password:
-                print_login()
-                # Start interface service
-                interface()
+        if user in USERS and USERS[user] == password:
+            print_login()
+            # Start interface service
+            interface()
         limit -= 1
         print_login(limit)
 
