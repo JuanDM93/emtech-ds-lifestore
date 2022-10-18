@@ -3,37 +3,39 @@ Frontend module
 """
 import os
 from time import sleep
-from .backend import (
-    SALES, SEARCHES, YEARS, CATEGORIES,
-    clean_list, custom_sort, filter_categories, get_yearly,
-    sum_reviews, get_reviews, get_stocks, get_total_revenue,
-    get_monthly, get_product, get_refunds, get_revenue,
+
+from frontend.locals import (
+    USERS,
+    PROCESSES,
+    EXIT_CMDS,
+    SLEEPING,
+    MONTHS,
+    PRINT_SIZE,
 )
-
-
-# LOCALS
-SLEEPING = 0.4
-PRINT_SIZE = 10
-USERS = {
-    'admin': 'pass',
-}
-
-PROCESSES = ['globals', 'cats', 'date']
-EXIT_CMDS = ['return', 'logout', 'exit']
-
-MONTHS = [
-    'JAN', 'FEB', 'MAR', 'APR',
-    'MAY', 'JUN', 'JUL', 'AUG',
-    'SEP', 'OCT', 'NOV', 'DEC',
-]
-
+from backend.globals import (
+    SALES, SEARCHES,
+    CATEGORIES,
+    YEARS,
+)
+from backend.services import (
+    get_yearly, get_monthly,
+    sum_reviews, get_reviews,
+    get_stocks,  get_product,
+    get_refunds, get_revenue,
+    get_total_revenue,
+)
+from backend.filters import (
+    clean_list,
+    custom_sort,
+    filter_categories,
+)
 
 #################
 #   Interface   #
 #################
 
 
-def clear():
+def clear_screen():
     """
     Clears screen
     """
@@ -62,7 +64,7 @@ def login(limit: int = 3):
         else:
             print('Login succesful!\n')
         sleep(SLEEPING)
-        clear()
+        clear_screen()
 
     while limit > 0:
         (user, password) = ask()
@@ -95,7 +97,7 @@ def interface():
             print(f'\nINFO: Running "{PROCESSES[response]}" process\n')
             sleep(SLEEPING)
             report(response)
-            clear()
+            clear_screen()
 
 
 def print_options(options: list) -> int:
@@ -134,7 +136,7 @@ def print_options(options: list) -> int:
 
     print(separator)
     sleep(SLEEPING)
-    clear()
+    clear_screen()
     return answer
 
 
@@ -145,7 +147,7 @@ def exit_status(answer: str) -> bool:
     if answer == EXIT_CMDS[-1]:
         exit()
     else:
-        clear()
+        clear_screen()
         if answer == EXIT_CMDS[1]:
             login()
         if answer == EXIT_CMDS[0]:
@@ -167,7 +169,7 @@ def report(process_id: int = 0):
         Return
         """
         input('\nInput anything to return\n')
-        clear()
+        clear_screen()
 
     if process_id == 0:
         print('\n- Globals -\n')
@@ -212,7 +214,7 @@ def ask_globals():
     # Options loop
     response = print_options(options)
     while response < 0 or response > len(options):
-        clear()
+        clear_screen()
         response = print_options(options)
 
     print('\nThis is a global report\n')
@@ -291,7 +293,7 @@ def ask_cats():
     # Options loop
     cat = print_options(CATEGORIES)
     while cat < 0 or cat > len(CATEGORIES):
-        clear()
+        clear_screen()
         cat = print_options(CATEGORIES)
 
     # Cat report
@@ -318,7 +320,7 @@ def ask_dates():
     # Options loop
     response = print_options(YEARS)
     while response < 0 or response > len(YEARS):
-        clear()
+        clear_screen()
         response = print_options(YEARS)
 
     print(f'\nThis is a {YEARS[response]} date report\n')
